@@ -89,8 +89,8 @@ class TopSongs(Base):
         * url: Str, Youtube URL of song video """
     __tablename__ = 'topsongs'
 
-    artist = Column(Integer, ForeignKey('artist.id'))
-    rank = Column(Integer, nullable=False)
+    artist = Column(Integer, ForeignKey('artist.id'), primary_key=True)
+    rank = Column(Integer, nullable=False, primary_key=True)
     name = Column(String(300), nullable=False)
     url = Column(String(250))
 
