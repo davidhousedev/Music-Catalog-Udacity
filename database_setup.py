@@ -70,7 +70,7 @@ class Artist(Base):
     __tablename__ = 'artist'
 
     art_id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
+    name = Column(String(300), nullable=False)
     emergence = Column(Date)
     created = Column(DateTime, nullable=False)
     updated = Column(DateTime, default=datetime.datetime.utcnow)
@@ -91,7 +91,7 @@ class TopSongs(Base):
 
     artist = Column(Integer, ForeignKey('artist.id'))
     rank = Column(Integer, nullable=False)
-    name = Column(String(100), nullable=False)
+    name = Column(String(300), nullable=False)
     url = Column(String(250))
 
 # TODO: Add artist genre table
