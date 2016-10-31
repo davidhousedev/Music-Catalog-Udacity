@@ -24,18 +24,18 @@ class Genre(Base):
     Columns:
         * (PRIMARY) gen_id: Int, database id for genre
         * (REQ) name: Str, text name of genre
-        * emergence: Date, Aproximate date when
+        * emergence: Str, Aproximate date when
             genre emerged in history
-        * created: DateTime, time genre created in database
-        * updated: DateTime, last update time in database,
+        * created: Str, time genre created in database
+        * updated: Str, last update time in database,
             defaults to datetime.utcnow """
     __tablename__ = 'genre'
 
     gen_id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    emergence = Column(Date)
-    created = Column(DateTime)
-    updated = Column(DateTime, default=datetime.datetime.utcnow)
+    emergence = Column(String(100))
+    created = Column(String(100))
+    updated = Column(String(100), default=datetime.datetime.utcnow)
 
 
 class Influence(Base):
@@ -64,16 +64,16 @@ class Artist(Base):
     Columns:
         * (PRIMARY) art_id: Int, database id for artist
         * (REQ) name: Str, text name of artist
-        * emergence: Date, aproximate date when artist began playing music
-        * (REQ) created: DateTime, time created in database, set to datetime.utcnow
+        * emergence: Str, aproximate date when artist began playing music
+        * (REQ) created: Str, time created in database, set to datetime.utcnow
             when creating an artist in DB"""
     __tablename__ = 'artist'
 
     art_id = Column(Integer, primary_key=True)
     name = Column(String(300), nullable=False)
-    emergence = Column(Date)
-    created = Column(DateTime, nullable=False)
-    updated = Column(DateTime, default=datetime.datetime.utcnow)
+    emergence = Column(String(100))
+    created = Column(String(100), nullable=False)
+    updated = Column(String(100), default=datetime.datetime.utcnow)
 
 
 class TopSongs(Base):
@@ -95,7 +95,6 @@ class TopSongs(Base):
     url = Column(String(250))
 
 # TODO: Add artist genre table
-# TODO: Increase artist name length
 
 engine = create_engine('sqlite:///catalog.db')
 
