@@ -4,7 +4,8 @@ from flask import redirect, flash, jsonify
 # Initializes python shell to interface with database
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Artist, ArtistGenre, Genre, Influence, TopSongs
+from database_setup import Base, Artist, ArtistGenre, Genre
+from database_setup import Influence, TopSongs
 
 # Connect to database
 engine = create_engine('sqlite:///catalog.db')
@@ -19,7 +20,7 @@ app = Flask(__name__)
 
 @app.route('/')
 @app.route('/catalog/')
-def catalog(Base):
+def catalog():
     """ Displays HTML tempplate for catalog homepage """
     return 'Hello, homepage'
 
