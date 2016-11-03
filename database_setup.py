@@ -52,8 +52,8 @@ class Influence(Base):
     __tablename__ = 'influence'
 
     inf_id = Column(Integer, primary_key=True)
-    parent = Column(Integer, ForeignKey('genre.id'), nullable=False)
-    child = Column(Integer, ForeignKey('genre.id'), nullable=False)
+    parent = Column(Integer, ForeignKey('genre.gen_id'), nullable=False)
+    child = Column(Integer, ForeignKey('genre.gen_id'), nullable=False)
 
 
 class Artist(Base):
@@ -89,7 +89,7 @@ class TopSongs(Base):
         * url: Str, Youtube URL of song video """
     __tablename__ = 'topsongs'
 
-    artist = Column(Integer, ForeignKey('artist.id'), primary_key=True)
+    artist = Column(Integer, ForeignKey('artist.art_id'), primary_key=True)
     rank = Column(Integer, nullable=False, primary_key=True)
     name = Column(String(300), nullable=False)
     url = Column(String(250))
