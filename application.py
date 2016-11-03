@@ -30,6 +30,16 @@ def artist(artist_id):
     """ Displays artist page by artist database id """
     return 'Hello, artist %s' % artist_id
 
+@app.route('/artist/create')
+def artist_create():
+    """ Renders and processess form for creating artists """
+    return 'Creating an artist'
+
+@app.route('/artist/edit/<int:artist_id>/')
+def artist_edit(artist_id):
+    """ Edit DB entry of a specific artist """
+    return 'Editing artist %s' % artist_id
+
 if __name__ == '__main__':
     app.secret_key = 'turtles'  # TODO: Change me for production
     app.debug = True
