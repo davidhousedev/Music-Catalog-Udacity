@@ -25,6 +25,11 @@ def catalog():
     return 'Hello, homepage'
 
 
+@app.route('/artist/<int:artist_id>/')
+def artist(artist_id):
+    """ Displays artist page by artist database id """
+    return 'Hello, artist %s' % artist_id
+
 if __name__ == '__main__':
     app.secret_key = 'turtles'  # TODO: Change me for production
     app.debug = True
