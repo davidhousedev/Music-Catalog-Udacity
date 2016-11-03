@@ -94,7 +94,18 @@ class TopSongs(Base):
     name = Column(String(300), nullable=False)
     url = Column(String(250))
 
-# TODO: Add artist genre table
+class ArtistGenre(Base):
+
+    """ Database table to list all relevant genres to a specific artist
+    This table will contain a single row for every genre that is relevant
+    to a specific artist.
+
+    Columns:
+        * """
+    __tablename__ = 'artistgenre'
+
+    artist = Column(Integer, ForeignKey('artist.art_id'), primary_key=True)
+    genre = Column(Integer, ForeignKey('genre.gen_id'), primary_key=True)
 
 engine = create_engine('sqlite:///catalog.db')
 
