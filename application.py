@@ -1,4 +1,4 @@
-from flask import Flask, url_for, render_template, request,
+from flask import Flask, url_for, render_template, request
 from flask import redirect, flash, jsonify
 
 # Initializes python shell to interface with database
@@ -17,7 +17,11 @@ session = DBSession()
 app = Flask(__name__)
 
 
-# Routes go here
+@app.route('/')
+@app.route('/catalog/')
+def catalog(Base):
+    """ Displays HTML tempplate for catalog homepage """
+    return 'Hello, homepage'
 
 
 if __name__ == '__main__':
