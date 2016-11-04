@@ -1,19 +1,19 @@
 from flask import Flask, url_for, render_template, request
 from flask import redirect, flash, jsonify
 
-# Initializes python shell to interface with database
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Artist, ArtistGenre, Genre
-from database_setup import Influence, TopSongs
+# # Initializes python shell to interface with database
+# from sqlalchemy import create_engine
+# from sqlalchemy.orm import sessionmaker
+# from database_setup import Base, Artist, ArtistGenre, Genre
+# from database_setup import Influence, TopSongs
 
-# Connect to database
-engine = create_engine('sqlite:///catalog.db')
-Base.metadata.bind = engine
+# # Connect to database
+# engine = create_engine('sqlite:///catalog.db')
+# Base.metadata.bind = engine
 
-# Establish database connection session
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+# # Establish database connection session
+# DBSession = sessionmaker(bind=engine)
+# session = DBSession()
 
 app = Flask(__name__)
 
@@ -23,7 +23,11 @@ app = Flask(__name__)
 @app.route('/catalog/')
 def catalog():
     """ Displays HTML tempplate for catalog homepage """
-    return 'Hello, homepage'
+    test_genres = ['rock', 'hip-hop', 'classical']
+    test_items = ['foo', 'bar']
+    return render_template('catalog.html',
+                           genres=test_genres,
+                           recent_items=test_items)
 
 
 # Artist CRUD Routes
@@ -82,6 +86,7 @@ def genre_edit(genre):
 def genre_delete(genre):
     """ Delete a specific genre """
     return 'Delete genre: %s' % genre
+
 
 if __name__ == '__main__':
     app.secret_key = 'turtles'  # TODO: Change me for production
