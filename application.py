@@ -36,7 +36,11 @@ def catalog():
 @app.route('/artist/<artist>')
 def artist(artist):
     """ Displays artist page by artist database id """
-    return 'Hello, artist %s' % artist
+    artist = dict(name='Radiohead',
+                  emergence='1990',
+                  genres=['Rock', 'Alternative'],
+                  top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
+    return render_template('artist.html', artist=artist)
 
 
 @app.route('/artist/create/')
