@@ -37,8 +37,13 @@ def artist_create():
 
 @app.route('/artist/edit/<int:artist_id>/')
 def artist_edit(artist_id):
-    """ Edit DB entry of a specific artist """
+    """ Edit database entry of a specific artist """
     return 'Editing artist %s' % artist_id
+
+@app.route('/artist/delete/<int:artist_id>/')
+def artist_delete(artist_id):
+    """ Delete an artist from the database """
+    return 'Deleting artist %s' % artist_id
 
 if __name__ == '__main__':
     app.secret_key = 'turtles'  # TODO: Change me for production
