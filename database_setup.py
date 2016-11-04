@@ -64,6 +64,7 @@ class Artist(Base):
     Columns:
         * (PRIMARY) art_id: Int, database id for artist
         * (REQ) name: Str, text name of artist
+        * (REQ) url_name: Str, artist's name as it appears in a URL
         * emergence: Str, aproximate date when artist began playing music
         * (REQ) created: Str, time created in database, set to datetime.utcnow
             when creating an artist in DB"""
@@ -71,6 +72,7 @@ class Artist(Base):
 
     art_id = Column(Integer, primary_key=True)
     name = Column(String(300), nullable=False)
+    url_name = Column(String(3000), nullable=False)
     emergence = Column(String(100))
     created = Column(String(100), nullable=False)
     updated = Column(String(100), default=datetime.datetime.utcnow)
