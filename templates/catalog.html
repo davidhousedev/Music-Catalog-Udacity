@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Catalog{% endblock %}
+{% block head %}
+    {# Page-specific JS and CSS #}
+{% endblock %}
+{% block content %}
+    <h1>Music Catalog</h1>
+    <h2>Genres</h2>
+        {% for genre in genres %}
+            print genre
+        {% endfor %}
+    <h2>Recent Additions</h2>
+        {% for item in recent_items %}
+            print item
+        {% endfor %}
+{% endblock %}
