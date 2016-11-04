@@ -25,25 +25,31 @@ def catalog():
     return 'Hello, homepage'
 
 
-@app.route('/artist/<int:artist_id>/')
-def artist(artist_id):
+@app.route('/artist/<int:artist>/')
+@app.route('/artist/<artist>')
+def artist(artist):
     """ Displays artist page by artist database id """
-    return 'Hello, artist %s' % artist_id
+    return 'Hello, artist %s' % artist
+
 
 @app.route('/artist/create')
 def artist_create():
     """ Renders and processess form for creating artists """
     return 'Creating an artist'
 
-@app.route('/artist/edit/<int:artist_id>/')
-def artist_edit(artist_id):
-    """ Edit database entry of a specific artist """
-    return 'Editing artist %s' % artist_id
 
-@app.route('/artist/delete/<int:artist_id>/')
-def artist_delete(artist_id):
+@app.route('/artist/edit/<int:artist>/')
+@app.route('/artist/edit/<artist>')
+def artist_edit(artist):
+    """ Edit database entry of a specific artist """
+    return 'Editing artist %s' % artist
+
+
+@app.route('/artist/delete/<int:artist>/')
+@app.route('/artist/delete/<artist>')
+def artist_delete(artist):
     """ Delete an artist from the database """
-    return 'Deleting artist %s' % artist_id
+    return 'Deleting artist %s' % artist
 
 if __name__ == '__main__':
     app.secret_key = 'turtles'  # TODO: Change me for production
