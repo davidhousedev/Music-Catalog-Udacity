@@ -103,7 +103,8 @@ class ArtistGenre(Base):
     to a specific artist.
 
     Columns:
-        * """
+        * (REQ) artist: Int, database id for artist
+        * (REQ) genre: Int, database id for genre """
     __tablename__ = 'artistgenre'
 
     artist = Column(Integer, ForeignKey('artist.art_id'), primary_key=True)
