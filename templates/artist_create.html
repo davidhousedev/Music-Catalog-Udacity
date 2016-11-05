@@ -1,0 +1,14 @@
+<!-- Searches Spotify api for a specific artist and if artists are found displays list of possible matches. Select match to create a DB entry for that artist. If no artists are found, display list for custom artist creation. -->
+{% extends "base.html" %}
+{% block title %}Create an Artist{% endblock %}
+{% block head %}
+    {# Page-specific JS and CSS #}
+    <!-- <script src="/static/js/artist_create.js"></script> -->
+{% endblock %}
+{% block content %}
+    <form>
+        <label for="name">Artist</label>
+        <input type="text" id="name"></input>
+        <button>Search</button>
+    </form>
+{% endblock %}
