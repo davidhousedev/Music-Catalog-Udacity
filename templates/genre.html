@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{genre.name}}{% endblock %}
+{% block head %}
+    {# Page-specific JS and CSS #}
+{% endblock %}
+
+{% block content %}
+    {% for artist in artists %}
+        <p>{{artist.name}}</p>
+    {% endfor %}
+{% endblock %}
