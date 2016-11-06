@@ -53,7 +53,12 @@ def artist_create():
 @app.route('/artist/edit/<artist>')
 def artist_edit(artist):
     """ Edit database entry of a specific artist """
-    return 'Editing artist %s' % artist
+    artist = dict(name='Radiohead',
+                  url_name='radiohead',
+                  emergence='1990',
+                  genres=['Rock', 'Alternative'],
+                  top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
+    return render_template('artist_edit.html', artist=artist)
 
 
 @app.route('/artist/delete/<int:artist>/')

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{# Page title #}{% endblock %}
+{% block head %}
+    {# Page-specific JS and CSS #}
+{% endblock %}
+
+{% block content %}
+    <form method="POST" id="edit-form">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" placeholder="{{artist.name}}" />
+        <label for="emergence">Emergence</label>
+        <input type="text" name="emergence" id="emergence" placeholder="{{artist.emergence}}" />
+        <label>Genres
+            {% for genre in artist.genres %}
+                <input type="text" name="genre" placeholder="{{genre}}"/>
+            {% endfor %}
+        </label>
+        <label>Top Songs
+            {% for song in artist.top_songs %}
+                <input type="text" name="song" placeholder="{{song}}"/>
+            {% endfor %}
+        </label>
+        <button>Save Changes</button>
+        <a href="{{url_for('artist', artist=artist.url_name)}}">Cancel</a>
+    </form>
+{% endblock %}
