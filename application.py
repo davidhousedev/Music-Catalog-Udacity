@@ -65,7 +65,12 @@ def artist_edit(artist):
 @app.route('/artist/delete/<artist>')
 def artist_delete(artist):
     """ Delete an artist from the database """
-    return 'Deleting artist %s' % artist
+    artist = dict(name='Radiohead',
+                  url_name='radiohead',
+                  emergence='1990',
+                  genres=['Rock', 'Alternative'],
+                  top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
+    return render_template('artist_delete.html', artist=artist)
 
 
 # Genre CRUD routes
