@@ -13,8 +13,9 @@ $(function(){
                 searchError("No results from search");
             }
             var artists = data.artists.items; // Extract artist array
+            // Print all artists to browser window
             for (var i = 0; i < artists.length; i++){
-                var $artistDiv = $('<li>', {id: 'artist' + i,
+                var $artistDiv = $('<li>', {id: i,
                                             'class': 'artist'});
                 var addListener = function(id){
                     $artistDiv.click(function(){
