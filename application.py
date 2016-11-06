@@ -46,7 +46,7 @@ def artist(artist):
 @app.route('/artist/create/')
 def artist_create():
     """ Renders and processess form for creating artists """
-    return 'Creating an artist'
+    return render_template('artist_create.html')
 
 
 @app.route('/artist/edit/<int:artist>/')

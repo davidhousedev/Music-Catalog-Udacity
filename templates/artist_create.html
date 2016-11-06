@@ -3,12 +3,16 @@
 {% block title %}Create an Artist{% endblock %}
 {% block head %}
     {# Page-specific JS and CSS #}
-    <!-- <script src="/static/js/artist_create.js"></script> -->
+    <script   src="https://code.jquery.com/jquery-3.1.1.js"   integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="   crossorigin="anonymous"></script>
+    <script src="/static/js/artist_create.js"></script>
 {% endblock %}
 {% block content %}
-    <form>
+    <form id='artist-search'>
         <label for="name">Artist</label>
-        <input type="text" id="name"></input>
+        <input type="text" name="name" autocomplete="off" id="name"></input>
         <button>Search</button>
     </form>
+    <ol id="artists">
+        <!-- Artists will be rendered here -->
+    </ol>
 {% endblock %}
