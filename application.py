@@ -100,7 +100,18 @@ def genre(genre):
 @app.route('/genre/create/')
 def genre_create():
     """ Create a new genre in the database """
-    return 'Create a genre'
+    radiohead = dict(name='Radiohead',
+                     url_name='radiohead',
+                     emergence='1990',
+                     genres=['Rock', 'Alternative'],
+                     top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
+    seratones = dict(name='Seratones',
+                     url_name='seratones',
+                     emergence='2016',
+                     genres=['Rock', 'Indie'],
+                     top_songs=['Don\'t Need It', 'Necromancer', 'Chandelier'])
+    artists = [radiohead, seratones]
+    return render_template('genre_create.html', artists=artists)
 
 
 @app.route('/genre/edit/<int:genre>/')

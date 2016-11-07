@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{# Page title #}{% endblock %}
+{% block head %}
+    {# Page-specific JS and CSS #}
+{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name"/>
+        <br>
+        <label>Genres
+            {% for artist in artists %}
+                <br>
+                <label for="{{artist.name}}">{{artist.name}}</label>
+                <input type="checkbox" name="{{artist.name}}" id="{{artist.name}}"/>
+            {% endfor %}
+        </label>
+        <br>
+        <button>Create</button>
+    </form>
+{% endblock %}
