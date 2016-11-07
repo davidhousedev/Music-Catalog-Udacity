@@ -33,7 +33,6 @@ class Genre(Base):
 
     gen_id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    emergence = Column(String(100))
     created = Column(String(100))
     updated = Column(String(100), default=datetime.datetime.utcnow)
 
