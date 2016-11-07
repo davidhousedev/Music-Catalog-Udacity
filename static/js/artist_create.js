@@ -19,7 +19,7 @@ $(function(){
                                             'class': 'artist'});
                 var addListener = function(id){
                     $artistDiv.click(function(){
-                        alert('Clicked: ' + id);
+                        createArtist(artists[id].id)
                     })
                 }($artistDiv.attr('id')); //add current artist event listener
                 $artistDiv.text(artists[i].name);
@@ -34,6 +34,14 @@ $(function(){
 // and allows manual creation of a music artist
 function searchError(err){
     console.log('Error: ' + err);
+}
+
+function createArtist(spotifyId){
+    $.ajax({
+        type: 'POST',
+        url: '/artist/create/',
+        data: spotifyId
+    })
 }
 
 // refresh with: window.location.reload(true)

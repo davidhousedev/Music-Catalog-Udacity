@@ -43,12 +43,20 @@ def artist(artist):
     return render_template('artist.html', artist=artist)
 
 
-@app.route('/artist/create/')
+@app.route('/artist/create/',
+           methods=['GET', 'POST'])
 def artist_create():
     """ Renders and processess form for creating artists """
-    return render_template('artist_create.html')
+    if request.method == 'POST':
+        form_data = request.form
+        for item in form_data:
+            spotify_id = item
+            break
+        print spotify_id
+    else:
+        return render_template('artist_create.html')
 
-edit/1/
+
 @app.route('/artist/edit/<int:artist>/')
 @app.route('/artist/edit/<artist>')
 def artist_edit(artist):
