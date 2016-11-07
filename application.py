@@ -48,7 +48,7 @@ def artist_create():
     """ Renders and processess form for creating artists """
     return render_template('artist_create.html')
 
-
+edit/1/
 @app.route('/artist/edit/<int:artist>/')
 @app.route('/artist/edit/<artist>')
 def artist_edit(artist):
@@ -118,14 +118,33 @@ def genre_create():
 @app.route('/genre/edit/<genre>/')
 def genre_edit(genre):
     """ Edit a specific genre """
-    return 'Editing genre: %s' % genre
+    radiohead = dict(name='Radiohead',
+                     art_id=1,
+                     url_name='radiohead',
+                     emergence='1990',
+                     genres=['Rock', 'Alternative'],
+                     top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
+    seratones = dict(name='Seratones',
+                     art_id=2,
+                     url_name='seratones',
+                     emergence='2016',
+                     genres=['Rock', 'Indie'],
+                     top_songs=['Don\'t Need It', 'Necromancer', 'Chandelier'])
+    genre = dict(name='Alternative',
+                 artists=[2])
+    artists = [radiohead, seratones]
+    return render_template('genre_edit.html',
+                           artists=artists,
+                           genre=genre)
 
 
 @app.route('/genre/delete/<int:genre>/')
 @app.route('/genre/delete/<genre>/')
 def genre_delete(genre):
     """ Delete a specific genre """
-    return 'Delete genre: %s' % genre
+    genre = dict(name='Alternative',
+                 artists=[2])
+    return render_template('genre_delete.html', genre=genre)
 
 
 if __name__ == '__main__':
