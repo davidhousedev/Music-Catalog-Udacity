@@ -70,6 +70,7 @@ class Artist(Base):
     __tablename__ = 'artist'
 
     art_id = Column(Integer, primary_key=True)
+    spotify_id = Column(String(50), unique=True)
     name = Column(String(300), nullable=False)
     url_name = Column(String(3000), nullable=False)
     emergence = Column(String(100))
@@ -91,7 +92,7 @@ class TopSongs(Base):
     __tablename__ = 'topsongs'
 
     artist = Column(Integer, ForeignKey('artist.art_id'), primary_key=True)
-    rank = Column(Integer, nullable=False, primary_key=True)
+    rank = Column(Integer, nullable=False, unique=True)
     name = Column(String(300), nullable=False)
     url = Column(String(250))
 
@@ -107,7 +108,7 @@ class ArtistGenre(Base):
     __tablename__ = 'artistgenre'
 
     artist = Column(Integer, ForeignKey('artist.art_id'), primary_key=True)
-    genre = Column(Integer, ForeignKey('genre.gen_id'), primary_key=True)
+    genre = Column(Integer, ForeignKey('genre.gen_id'), unique=True)
 
 engine = create_engine('sqlite:///catalog.db')
 
