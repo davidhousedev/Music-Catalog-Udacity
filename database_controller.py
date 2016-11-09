@@ -42,7 +42,6 @@ def db_add_artist(spotify_id):
         artist_top_songs.append(track[u'name'])
     # Obtain video IDs from youtube corresponding to top songs
     youtube_ids = []
-    #global TOP_SONG_LIMIT
     for song in artist_top_songs:
         vid_id = get_youtube_id(artist_name, song)
         youtube_ids.append(vid_id)
@@ -72,10 +71,18 @@ def db_add_artist(spotify_id):
         # Add artist genres to database
         update_artist_genres(session, artist_id, artist_genres)
         # Add artist top songs to database
-
+        for i in xrange(3):
+            rank = i + 1
+            new_top_song = TopSongs(artist=artist_id,
+                                    rank=rank,
+                                    name=artist_top_songs[i],
+                                    youtube_id=youtube_ids[i])
+            session.add(new_top_song)
         session.commit()
-        artist_genres = session.query(ArtistGenre).all()
-        print artist_genres
+        artist_songs = session.query(TopSongs).filter_by(artist=artist_id).all()
+        for song in artist_songs:
+            print song.name
+            print song.youtube_id
 
     except Exception, e:
         session.rollback()
