@@ -24,7 +24,11 @@ def db_add_artist(spotify_id):
     pprint.pprint(data)
     print 'name is %s' % data[u'name'].lower()
 
+
+
     artist_name = data[u'name']
+    artist_genres = data[u'genres']
+
     new_artist = Artist(name=artist_name,
                         spotify_id=spotify_id,
                         url_name=artist_name.lower(),
@@ -34,11 +38,28 @@ def db_add_artist(spotify_id):
     try:
         session.add(new_artist)
         session.commit()
-        artist = artist_by_spotify_id(session, spotify_id)
-        print 'Added artist: %s' % artist.name
+        # Retrieve new artist from DB, to use artist art_id
+        artist_id = artist_by_spotify_id(session, spotify_id).art_id
+        print 'Added artist: %s' % artist_id
+        # Add any new genres to database
+        update_genres(session, artist_genres)
+        session.commit()
+        # Retrieve up-to-date genres from database
+        db_genres = get_genres(session)
+        for genre in db_genres:
+            print genre.name
+        # Add artist genres to database
+        update_artist_genres(session, artist_id, artist_genres)
+        # Add artist top songs to database
+        session.commit()
+        artist_genres = session.query(ArtistGenre).all()
+        print artist_genres
+
     except Exception, e:
         session.rollback()
         raise e
+    finally:
+        session.close()
 
 def artist_by_spotify_id(session, spotify_id):
     """ Queries database for artist and returns if found """
@@ -48,3 +69,36 @@ def artist_by_spotify_id(session, spotify_id):
         return artist
     except Exception, e:
         raise e
+
+def get_genres(session):
+    return session.query(Genre).all()
+
+def get_genre_by_name(session, name):
+    ''' Searches database for a specific genre, by genre name.
+    Returns a genre object corresponding to the name '''
+    genre_name = unicode(name.lower())
+    return session.query(Genre).filter_by(name=genre_name).one()
+
+def update_genres(session, new_genres):
+    ''' When passed a db session and a list of music genres,
+    this function adds all new genres to database '''
+    db_genres = get_genres(session)
+    db_genre_names = []
+    for genre in db_genres:
+        db_genre_names.append(genre.name)
+    for genre in new_genres:
+        if genre not in db_genre_names:
+            print 'trying to add %s' % genre
+            new_genre = Genre(name=genre,
+                              created=datetime.datetime.utcnow())
+            session.add(new_genre)
+
+def update_artist_genres(session, artist_id, genres):
+    ''' When passed a db session, a db art_id, and a list of genre strings,
+    updates the ArtistGenre table with a row linking the artist with a genre '''
+    for genre in genres:
+        genre_id = get_genre_by_name(session, genre).gen_id
+        print 'adding: %s %s' % (artist_id, genre_id)
+        new_artist_genre = ArtistGenre(artist=artist_id,
+                                       genre=genre_id)
+        session.add(new_artist_genre)
