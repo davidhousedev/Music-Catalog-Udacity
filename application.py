@@ -1,5 +1,9 @@
+import json
+
 from flask import Flask, url_for, render_template, request
 from flask import redirect, flash, jsonify
+
+import database_controller as db
 
 # # Initializes python shell to interface with database
 # from sqlalchemy import create_engine
@@ -52,7 +56,14 @@ def artist_create():
         for item in form_data:
             spotify_id = item
             break
-        print spotify_id
+        message = db.db_add_artist(spotify_id)
+        if message[0] == 'add':
+            flash('Added artist to database: %s' % message[1])
+
+        obj = dict(artist_name=message[1],
+                   spotify_id=spotify_id,
+                   artist_url=url_for('artist', artist=message[1]))
+        return json.dumps(obj)
     else:
         return render_template('artist_create.html')
 

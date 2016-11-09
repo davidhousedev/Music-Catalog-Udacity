@@ -40,7 +40,11 @@ function createArtist(spotifyId){
     $.ajax({
         type: 'POST',
         url: '/artist/create/',
-        data: spotifyId
+        data: spotifyId,
+        success: function(data){
+            console.log(data);
+            alert('successfully added artist');
+        }
     })
 }
 
