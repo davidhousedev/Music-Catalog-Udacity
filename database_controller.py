@@ -24,7 +24,8 @@ TOP_SONG_LIMIT = 3
 
 def db_add_artist(spotify_id):
     """ Queries Spotify by artist id for artist info and top tracks
-    then adds artist to appropriate database tables """
+    then adds artist to appropriate database tables
+    Returns tuple ('add', artist_name) if successful """
     get_youtube_id('radiohead', 'reckoner')
     # Retrieve artist information from Spotify
     url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
@@ -71,24 +72,25 @@ def db_add_artist(spotify_id):
         # Add artist genres to database
         update_artist_genres(session, artist_id, artist_genres)
         # Add artist top songs to database
-        for i in xrange(3):
-            rank = i + 1
+        if len(artist_top_songs) > TOP_SONG_LIMIT:
+            songs_len = TOP_SONG_LIMIT
+        else:
+            songs_len = len(artist_top_songs)
+        for i in xrange(songs_len):
             new_top_song = TopSongs(artist=artist_id,
-                                    rank=rank,
+                                    rank=i + 1,
                                     name=artist_top_songs[i],
                                     youtube_id=youtube_ids[i])
             session.add(new_top_song)
         session.commit()
-        artist_songs = session.query(TopSongs).filter_by(artist=artist_id).all()
-        for song in artist_songs:
-            print song.name
-            print song.youtube_id
 
     except Exception, e:
         session.rollback()
         raise e
     finally:
         session.close()
+
+    return ('add', artist_name.lower())
 
 def artist_by_spotify_id(session, spotify_id):
     """ Queries database for artist and returns if found """
