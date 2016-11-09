@@ -108,7 +108,7 @@ class ArtistGenre(Base):
     __tablename__ = 'artistgenre'
 
     artist = Column(Integer, ForeignKey('artist.art_id'), primary_key=True)
-    genre = Column(Integer, ForeignKey('genre.gen_id'), unique=True)
+    genre = Column(Integer, ForeignKey('genre.gen_id'), primary_key=True)
 
 engine = create_engine('sqlite:///catalog.db')
 
