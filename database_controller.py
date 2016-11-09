@@ -1,7 +1,10 @@
+import urllib
 import urllib2
 import json
 import pprint # remove for production
 import datetime
+
+from api_keys import GOOGLE_API_KEY
 
 # Initializes python shell to interface with database
 from sqlalchemy import create_engine
@@ -16,18 +19,36 @@ Base.metadata.bind = engine
 # Establish database connection session
 DBSession = sessionmaker(bind=engine)
 
+# Define maximum number of top songs that should be stored in database
+TOP_SONG_LIMIT = 3
+
 def db_add_artist(spotify_id):
     """ Queries Spotify by artist id for artist info and top tracks
     then adds artist to appropriate database tables """
+    get_youtube_id('radiohead', 'reckoner')
+    # Retrieve artist information from Spotify
     url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
     data = json.load(urllib2.urlopen(url))
-    pprint.pprint(data)
+    print 'id is %s' % spotify_id
     print 'name is %s' % data[u'name'].lower()
-
-
-
     artist_name = data[u'name']
     artist_genres = data[u'genres']
+
+    # Retrieve artist top songs from Spotify
+    url += '/top-tracks/?country=US'
+    song_data = json.load(urllib2.urlopen(url))
+    artist_top_songs = []
+    for track in song_data[u'tracks']:
+        artist_top_songs.append(track[u'name'])
+    # Obtain video IDs from youtube corresponding to top songs
+    youtube_ids = []
+    #global TOP_SONG_LIMIT
+    for song in artist_top_songs:
+        vid_id = get_youtube_id(artist_name, song)
+        youtube_ids.append(vid_id)
+        if len(youtube_ids) == TOP_SONG_LIMIT:
+            break
+    pprint.pprint(youtube_ids)
 
     new_artist = Artist(name=artist_name,
                         spotify_id=spotify_id,
@@ -51,6 +72,7 @@ def db_add_artist(spotify_id):
         # Add artist genres to database
         update_artist_genres(session, artist_id, artist_genres)
         # Add artist top songs to database
+
         session.commit()
         artist_genres = session.query(ArtistGenre).all()
         print artist_genres
@@ -102,3 +124,15 @@ def update_artist_genres(session, artist_id, genres):
         new_artist_genre = ArtistGenre(artist=artist_id,
                                        genre=genre_id)
         session.add(new_artist_genre)
+
+def get_youtube_id(artist, song_name):
+    ''' Searches youtube videos for an artist and song name,
+    and returns a youtube video ID as a unicode string '''
+    global GOOGLE_API_KEY
+    url = 'https://www.googleapis.com/youtube/v3/search'
+    headers = {'part': 'snippet',
+               'q': '%s %s' % (artist, song_name),
+               'key': GOOGLE_API_KEY}
+    url += '?' + urllib.urlencode(headers)
+    youtube_data = json.load(urllib2.urlopen(url))
+    return youtube_data[u'items'][0][u'id'][u'videoId']
