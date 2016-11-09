@@ -88,13 +88,13 @@ class TopSongs(Base):
         * (REQ) artist: Int, database id for artist
         * (REQ) rank: Int, relative rank of song
         * (REQ) name: Str, Text name of song
-        * url: Str, Youtube URL of song video """
+        * youtube_id: Str, Youtube URL of song video """
     __tablename__ = 'topsongs'
 
     artist = Column(Integer, ForeignKey('artist.art_id'), primary_key=True)
-    rank = Column(Integer, nullable=False, unique=True)
+    rank = Column(Integer, nullable=False, primary_key=True)
     name = Column(String(300), nullable=False)
-    url = Column(String(250))
+    youtube_id = Column(String(50))
 
 class ArtistGenre(Base):
 
