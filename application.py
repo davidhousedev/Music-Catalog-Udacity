@@ -1,4 +1,4 @@
-from helpers.url_helpers import parse_url
+from helpers.http_helpers import parse_url, parse_edit_form_data
 import json
 
 from flask import Flask, url_for, render_template, request
@@ -77,6 +77,7 @@ def artist_edit(artist):
     """ Edit database entry of a specific artist """
     if request.method == 'POST':
         print request.form
+        print parse_edit_form_data(request.form)
     artist = db.db_get_artist(parse_url(artist))
     return render_template('artist_edit.html', artist=artist)
 
