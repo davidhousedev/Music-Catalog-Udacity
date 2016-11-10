@@ -22,17 +22,20 @@ import database_controller as db
 
 app = Flask(__name__)
 
+# Define number of recent additions to display on catalog homepage
+MAX_RECENT_ADDITIONS = 5
+
 
 @app.route('/')
 @app.route('/index/')
 @app.route('/catalog/')
 def catalog():
     """ Displays HTML tempplate for catalog homepage """
-    test_genres = ['rock', 'hip-hop', 'classical']
-    test_items = ['foo', 'bar']
+    genres = db.db_get_all_genres()
+    recent_items = db.db_get_recent_additions(MAX_RECENT_ADDITIONS)
     return render_template('catalog.html',
-                           genres=test_genres,
-                           recent_items=test_items)
+                           genres=genres,
+                           recent_items=recent_items)
 
 
 # Artist CRUD Routes
@@ -42,8 +45,6 @@ def catalog():
 def artist(artist):
     """ Displays artist page by artist database id """
     artist = db.db_get_artist(parse_url(artist))
-    print artist['name']
-    print artist['top_songs']
     return render_template('artist.html', artist=artist)
 
 

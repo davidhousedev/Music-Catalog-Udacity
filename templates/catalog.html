@@ -11,6 +11,6 @@
         {% endfor %}
     <h2>Recent Additions</h2>
         {% for item in recent_items %}
-            {{item}}
+            <a href="{{url_for('artist', artist=item.lower())}}">{{item}}</a>
         {% endfor %}
 {% endblock %}

@@ -1,13 +1,13 @@
 import urllib
 import urllib2
 import json
-import pprint # remove for production
+import pprint  # remove for production
 import datetime
 
 from api_keys import GOOGLE_API_KEY
 
 # Initializes python shell to interface with database
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Artist, ArtistGenre, Genre
 from database_setup import Influence, TopSongs
@@ -21,6 +21,7 @@ DBSession = sessionmaker(bind=engine)
 
 # Define maximum number of top songs that should be stored in database
 TOP_SONG_LIMIT = 3
+
 
 def db_add_artist(spotify_id):
     """ Queries Spotify by artist id for artist info and top tracks
@@ -92,12 +93,12 @@ def db_add_artist(spotify_id):
 
     return ('add', artist_name.lower())
 
+
 def db_get_artist(artist):
     ''' Retrieves an artist and related tables from database,
     and formats it for easy handling and display '''
     session = DBSession()
     db_artist = None
-
     try:
         if type(artist) is int:
             db_artist = session.query(Artist).filter_by(art_id=artist).one()
@@ -119,14 +120,42 @@ def db_get_artist(artist):
             print artist['art_id']
             artist['genres'] = get_artist_genres(session, artist['art_id'])
             print artist['genres']
-            artist['top_songs'] = get_artist_top_songs(session, artist['art_id'])
+            artist['top_songs'] = get_artist_top_songs(
+                session, artist['art_id'])
             print artist['top_songs']
 
     except Exception, e:
         raise e
     finally:
         session.close()
-        return artist
+
+    return artist
+
+
+def db_get_all_genres():
+    ''' Returns a list containing genre names '''
+    session = DBSession()
+    try:
+        genres = get_genre_names(session)
+    except Exception, e:
+        raise e
+    finally:
+        session.close()
+
+    return genres
+
+
+def db_get_recent_additions(num):
+    ''' Returns a list of recently added artists num entries long '''
+    session = DBSession()
+    try:
+        additions = get_recently_added_artists(session, num)
+    except Exception, e:
+        raise e
+    finally:
+        session.close()
+
+    return additions
 
 
 def artist_by_spotify_id(session, spotify_id):
@@ -138,6 +167,16 @@ def artist_by_spotify_id(session, spotify_id):
     except Exception, e:
         raise e
 
+
+def get_recently_added_artists(session, num):
+    ''' Returns a list of the first num recently added artists '''
+    artists = session.query(Artist).order_by(desc(Artist.created)).limit(num)
+    names = []
+    for artist in artists:
+        names.append(artist.name)
+    return names
+
+
 def get_artist_genres(session, artist_id):
     ''' Returns a list of all genre names
     corresponding to a specific artist '''
@@ -148,17 +187,29 @@ def get_artist_genres(session, artist_id):
         genre_names.append(genre.name)
     return genre_names
 
-def get_genres(session):
-    return session.query(Genre).all()
 
 def get_artist_top_songs(session, artist_id):
     ''' Returns a list of tuples containing artist top song
     names and youtube video ids '''
-    song_objs = session.query(TopSongs).filter_by(artist=artist_id).order_by(TopSongs.rank).all()
+    song_objs = session.query(TopSongs).filter_by(
+        artist=artist_id).order_by(TopSongs.rank).all()
     songs = []
     for obj in song_objs:
         songs.append((obj.name, obj.youtube_id))
     return songs
+
+
+def get_genres(session):
+    return session.query(Genre).order_by(Genre.name).all()
+
+
+def get_genre_names(session):
+    genres = get_genres(session)
+    names = []
+    for genre in genres:
+        names.append(genre.name)
+    return names
+
 
 def get_genre_by_name(session, name):
     ''' Searches database for a specific genre, by genre name.
@@ -166,10 +217,12 @@ def get_genre_by_name(session, name):
     genre_name = unicode(name.lower())
     return session.query(Genre).filter_by(name=genre_name).one()
 
+
 def get_genre_by_id(session, id):
     ''' Searches database for a specific genre, by gen_id.
     Returns a genre object corresponding to that id '''
     return session.query(Genre).filter_by(gen_id=int(id)).one()
+
 
 def update_genres(session, new_genres):
     ''' When passed a db session and a list of music genres,
@@ -185,6 +238,7 @@ def update_genres(session, new_genres):
                               created=datetime.datetime.utcnow())
             session.add(new_genre)
 
+
 def update_artist_genres(session, artist_id, genres):
     ''' When passed a db session, a db art_id, and a list of genre strings,
     updates the ArtistGenre table with a row linking the artist with a genre '''
@@ -194,6 +248,7 @@ def update_artist_genres(session, artist_id, genres):
         new_artist_genre = ArtistGenre(artist=artist_id,
                                        genre=genre_id)
         session.add(new_artist_genre)
+
 
 def get_youtube_id(artist, song_name):
     ''' Searches youtube videos for an artist and song name,
