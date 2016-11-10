@@ -119,12 +119,14 @@ def db_get_artist(artist):
             print artist['art_id']
             artist['genres'] = get_artist_genres(session, artist['art_id'])
             print artist['genres']
+            artist['top_songs'] = get_artist_top_songs(session, artist['art_id'])
+            print artist['top_songs']
 
     except Exception, e:
         raise e
     finally:
         session.close()
-        return db_artist
+        return artist
 
 
 def artist_by_spotify_id(session, spotify_id):
@@ -148,6 +150,15 @@ def get_artist_genres(session, artist_id):
 
 def get_genres(session):
     return session.query(Genre).all()
+
+def get_artist_top_songs(session, artist_id):
+    ''' Returns a list of tuples containing artist top song
+    names and youtube video ids '''
+    song_objs = session.query(TopSongs).filter_by(artist=artist_id).order_by(TopSongs.rank).all()
+    songs = []
+    for obj in song_objs:
+        songs.append((obj.name, obj.youtube_id))
+    return songs
 
 def get_genre_by_name(session, name):
     ''' Searches database for a specific genre, by genre name.
