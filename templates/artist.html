@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% block title %}{{artist.name}}{% endblock %}
+{% block title %}{{artist['name']}}{% endblock %}
 {% block head %}
     {# Page-specific JS and CSS #}
 {% endblock %}
 {% block content %}
-    <h1>{{artist.name}}</h1>
-    <h4>emergence: {{artist.emergence}}</h4>
+    <h1>{{artist['name']}}</h1>
+    <h4>Top songs:</h4>
+    {% for song in artist['top_songs'] %}
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/{{song[1]}}" frameborder="0" allowfullscreen></iframe>
+    {% endfor %}
     <h4>Genres:</h4>
-    {% for genre in artist.genres %}
+    {% for genre in artist['genres'] %}
         <p>{{genre}}</p>
     {% endfor %}
-    <h4>Top songs:</h4>
-    {% for song in artist.top_songs %}
-        <p>{{song}}</p>
-    {% endfor %}
+
 {% endblock %}

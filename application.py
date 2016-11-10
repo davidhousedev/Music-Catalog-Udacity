@@ -42,6 +42,8 @@ def catalog():
 def artist(artist):
     """ Displays artist page by artist database id """
     artist = db.db_get_artist(parse_url(artist))
+    print artist['name']
+    print artist['top_songs']
     return render_template('artist.html', artist=artist)
 
 
