@@ -104,9 +104,21 @@ def db_get_artist(artist):
         else:
             db_artist = session.query(Artist).filter_by(url_name=artist).one()
 
-        if db_artist:
-            print db_artist.name
-            print db_artist.url_name
+        print db_artist.name
+        print db_artist.url_name
+        print db_artist.art_id
+
+        artist = dict(name=db_artist.name,
+                      url_name=db_artist.url_name,
+                      art_id=db_artist.art_id)
+        print artist
+        if artist:
+            print 'artist found'
+            print artist['name']
+            print artist['url_name']
+            print artist['art_id']
+            artist['genres'] = get_artist_genres(session, artist['art_id'])
+            print artist['genres']
 
     except Exception, e:
         raise e
@@ -124,6 +136,16 @@ def artist_by_spotify_id(session, spotify_id):
     except Exception, e:
         raise e
 
+def get_artist_genres(session, artist_id):
+    ''' Returns a list of all genre names
+    corresponding to a specific artist '''
+    genre_objs = session.query(ArtistGenre).filter_by(artist=artist_id).all()
+    genre_names = []
+    for obj in genre_objs:
+        genre = session.query(Genre).filter_by(gen_id=obj.genre).one()
+        genre_names.append(genre.name)
+    return genre_names
+
 def get_genres(session):
     return session.query(Genre).all()
 
@@ -132,6 +154,11 @@ def get_genre_by_name(session, name):
     Returns a genre object corresponding to the name '''
     genre_name = unicode(name.lower())
     return session.query(Genre).filter_by(name=genre_name).one()
+
+def get_genre_by_id(session, id):
+    ''' Searches database for a specific genre, by gen_id.
+    Returns a genre object corresponding to that id '''
+    return session.query(Genre).filter_by(gen_id=int(id)).one()
 
 def update_genres(session, new_genres):
     ''' When passed a db session and a list of music genres,
