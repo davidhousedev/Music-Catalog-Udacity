@@ -76,8 +76,8 @@ def artist_create():
 def artist_edit(artist):
     """ Edit database entry of a specific artist """
     if request.method == 'POST':
-        print request.form
-        print parse_edit_form_data(request.form)
+        form_data = parse_edit_form_data(request.form)
+
     artist = db.db_get_artist(parse_url(artist))
     return render_template('artist_edit.html', artist=artist)
 

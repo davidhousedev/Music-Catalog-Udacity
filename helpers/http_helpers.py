@@ -14,8 +14,6 @@ def parse_edit_form_data(form_data):
                 genres=[],
                 top_songs={})
     for key, value in form_data.iteritems():
-        print key, value
-        print data
         key = key.rsplit('-')
         if key[0] == r'name':
             data['name'] = value
