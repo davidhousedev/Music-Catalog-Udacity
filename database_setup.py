@@ -36,6 +36,16 @@ class Genre(Base):
     created = Column(String(100))
     updated = Column(String(100), default=datetime.datetime.utcnow)
 
+    @property
+    def serialize(self):
+        # Returns object in easily serializable format
+        return {
+            'name' : self.name,
+            'gen_id' : self.gen_id,
+            'created' : self.created,
+            'updated' : self.updated
+        }
+
 
 class Influence(Base):
 
@@ -44,15 +54,21 @@ class Influence(Base):
     Each row representes an influence relationship from parent to child.
 
     Columns:
-        * (PRIMARY) inf_id: Int, database id for influence
         * (REQ) parent: Int, database genre id for preceeding genre
         * (REQ) child: Int, database genre id for resulting genre """
 
     __tablename__ = 'influence'
 
-    inf_id = Column(Integer, primary_key=True)
-    parent = Column(Integer, ForeignKey('genre.gen_id'), nullable=False)
-    child = Column(Integer, ForeignKey('genre.gen_id'), nullable=False)
+    parent = Column(Integer, ForeignKey('genre.gen_id'), primary_key=True)
+    child = Column(Integer, ForeignKey('genre.gen_id'), primary_key=True)
+
+    @property
+    def serialize(self):
+        # Returns object in easily serializable format
+        return {
+            'parent' : self.parent,
+            'child' : self.child
+        }
 
 
 class Artist(Base):
@@ -73,9 +89,19 @@ class Artist(Base):
     spotify_id = Column(String(50), unique=True)
     name = Column(String(300), nullable=False)
     url_name = Column(String(3000), nullable=False)
-    emergence = Column(String(100))
     created = Column(String(100), nullable=False)
     updated = Column(String(100), default=datetime.datetime.utcnow)
+
+    @property
+    def serialize(self):
+        # Returns object in easily serializable format
+        return {
+            'name' : self.name,
+            'spotify_id' : self.spotify_id,
+            'art_id' : self.art_id,
+            'created' : self.created,
+            'updated' : self.updated
+        }
 
 
 class TopSongs(Base):
@@ -96,6 +122,16 @@ class TopSongs(Base):
     name = Column(String(300), nullable=False)
     youtube_id = Column(String(50))
 
+    @property
+    def serialize(self):
+        # Returns object in easily serializable format
+        return {
+            'name' : self.name,
+            'rank' : self.rank,
+            'artist' : self.artist,
+            'youtube_id' : self.youtube_id
+        }
+
 class ArtistGenre(Base):
 
     """ Database table to list all relevant genres to a specific artist
@@ -109,6 +145,14 @@ class ArtistGenre(Base):
 
     artist = Column(Integer, ForeignKey('artist.art_id'), primary_key=True)
     genre = Column(Integer, ForeignKey('genre.gen_id'), primary_key=True)
+
+    @property
+    def serialize(self):
+        # Returns object in easily serializable format
+        return {
+            'artist' : self.artist,
+            'genre' : self.genre
+        }
 
 engine = create_engine('sqlite:///catalog.db')
 
