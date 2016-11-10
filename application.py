@@ -1,3 +1,4 @@
+from helpers.url_helpers import parse_url
 import json
 
 from flask import Flask, url_for, render_template, request
@@ -37,13 +38,10 @@ def catalog():
 # Artist CRUD Routes
 
 @app.route('/artist/<int:artist>/')
-@app.route('/artist/<artist>')
+@app.route('/artist/<artist>/')
 def artist(artist):
     """ Displays artist page by artist database id """
-    artist = dict(name='Radiohead',
-                  emergence='1990',
-                  genres=['Rock', 'Alternative'],
-                  top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
+    artist = db.db_get_artist(parse_url(artist))
     return render_template('artist.html', artist=artist)
 
 
@@ -69,7 +67,7 @@ def artist_create():
 
 
 @app.route('/artist/edit/<int:artist>/')
-@app.route('/artist/edit/<artist>')
+@app.route('/artist/edit/<artist>/')
 def artist_edit(artist):
     """ Edit database entry of a specific artist """
     artist = dict(name='Radiohead',
@@ -77,11 +75,12 @@ def artist_edit(artist):
                   emergence='1990',
                   genres=['Rock', 'Alternative'],
                   top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
+
     return render_template('artist_edit.html', artist=artist)
 
 
 @app.route('/artist/delete/<int:artist>/')
-@app.route('/artist/delete/<artist>')
+@app.route('/artist/delete/<artist>/')
 def artist_delete(artist):
     """ Delete an artist from the database """
     artist = dict(name='Radiohead',
