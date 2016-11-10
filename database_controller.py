@@ -31,8 +31,7 @@ def db_add_artist(spotify_id):
     # Retrieve artist information from Spotify
     url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
     data = json.load(urllib2.urlopen(url))
-    print 'id is %s' % spotify_id
-    print 'name is %s' % data[u'name'].lower()
+
     artist_name = data[u'name']
     artist_genres = data[u'genres']
 
@@ -49,7 +48,6 @@ def db_add_artist(spotify_id):
         youtube_ids.append(vid_id)
         if len(youtube_ids) == TOP_SONG_LIMIT:
             break
-    pprint.pprint(youtube_ids)
 
     new_artist = Artist(name=artist_name,
                         spotify_id=spotify_id,
@@ -62,14 +60,11 @@ def db_add_artist(spotify_id):
         session.commit()
         # Retrieve new artist from DB, to use artist art_id
         artist_id = artist_by_spotify_id(session, spotify_id).art_id
-        print 'Added artist: %s' % artist_id
         # Add any new genres to database
         update_genres(session, artist_genres)
         session.commit()
         # Retrieve up-to-date genres from database
         db_genres = get_genres(session)
-        for genre in db_genres:
-            print genre.name
         # Add artist genres to database
         update_artist_genres(session, artist_id, artist_genres)
         # Add artist top songs to database
@@ -105,24 +100,13 @@ def db_get_artist(artist):
         else:
             db_artist = session.query(Artist).filter_by(url_name=artist).one()
 
-        print db_artist.name
-        print db_artist.url_name
-        print db_artist.art_id
-
         artist = dict(name=db_artist.name,
                       url_name=db_artist.url_name,
                       art_id=db_artist.art_id)
-        print artist
         if artist:
-            print 'artist found'
-            print artist['name']
-            print artist['url_name']
-            print artist['art_id']
             artist['genres'] = get_artist_genres(session, artist['art_id'])
-            print artist['genres']
             artist['top_songs'] = get_artist_top_songs(
                 session, artist['art_id'])
-            print artist['top_songs']
 
     except Exception, e:
         raise e
@@ -233,7 +217,6 @@ def update_genres(session, new_genres):
         db_genre_names.append(genre.name)
     for genre in new_genres:
         if genre not in db_genre_names:
-            print 'trying to add %s' % genre
             new_genre = Genre(name=genre,
                               created=datetime.datetime.utcnow())
             session.add(new_genre)
@@ -244,7 +227,6 @@ def update_artist_genres(session, artist_id, genres):
     updates the ArtistGenre table with a row linking the artist with a genre '''
     for genre in genres:
         genre_id = get_genre_by_name(session, genre).gen_id
-        print 'adding: %s %s' % (artist_id, genre_id)
         new_artist_genre = ArtistGenre(artist=artist_id,
                                        genre=genre_id)
         session.add(new_artist_genre)
