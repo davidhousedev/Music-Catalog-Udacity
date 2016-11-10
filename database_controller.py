@@ -92,6 +92,29 @@ def db_add_artist(spotify_id):
 
     return ('add', artist_name.lower())
 
+def db_get_artist(artist):
+    ''' Retrieves an artist and related tables from database,
+    and formats it for easy handling and display '''
+    session = DBSession()
+    db_artist = None
+
+    try:
+        if type(artist) is int:
+            db_artist = session.query(Artist).filter_by(art_id=artist).one()
+        else:
+            db_artist = session.query(Artist).filter_by(url_name=artist).one()
+
+        if db_artist:
+            print db_artist.name
+            print db_artist.url_name
+
+    except Exception, e:
+        raise e
+    finally:
+        session.close()
+        return db_artist
+
+
 def artist_by_spotify_id(session, spotify_id):
     """ Queries database for artist and returns if found """
     spotify_id = unicode(spotify_id)
