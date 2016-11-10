@@ -8,17 +8,21 @@
 {% block content %}
     <form method="POST" id="edit-form">
         <label for="name">Name</label>
-        <input type="text" name="name" id="name" placeholder="{{artist.name}}" />
-        <label for="emergence">Emergence</label>
-        <input type="text" name="emergence" id="emergence" placeholder="{{artist.emergence}}" />
+        <input type="text" name="name" id="name" value="{{artist.name}}" />
         <label>Genres
             {% for genre in artist.genres %}
-                <input type="text" name="genre" placeholder="{{genre}}"/>
+                <label for="{{genre}}">{{genre}}</label>
+                <input type="checkbox" name="genre-{{genre}}" id={{genre}} checked/>
             {% endfor %}
         </label>
         <label>Top Songs
+            {% set count = 0 %}
             {% for song in artist.top_songs %}
-                <input type="text" name="song" placeholder="{{song}}"/>
+                <label for="{{song[1]}}-title">Title</label>
+                <input type="text" name="song-title-{{count}}" id="{{song[1]}}-title" value="{{song[0]}}" />
+                <label for="{{song[1]}}-id">Youtube Video ID</label>
+                <input type="text" name="song-id-{{count}}" id="{{song[1]}}-id" value="{{song[1]}}"/>
+                {% set count = count + 1 %}
             {% endfor %}
         </label>
         <button>Save Changes</button>

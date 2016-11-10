@@ -69,16 +69,15 @@ def artist_create():
         return render_template('artist_create.html')
 
 
-@app.route('/artist/edit/<int:artist>/')
-@app.route('/artist/edit/<artist>/')
+@app.route('/artist/edit/<int:artist>/',
+           methods=['GET', 'POST'])
+@app.route('/artist/edit/<artist>/',
+           methods=['GET', 'POST'])
 def artist_edit(artist):
     """ Edit database entry of a specific artist """
-    artist = dict(name='Radiohead',
-                  url_name='radiohead',
-                  emergence='1990',
-                  genres=['Rock', 'Alternative'],
-                  top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
-
+    if request.method == 'POST':
+        print request.form
+    artist = db.db_get_artist(parse_url(artist))
     return render_template('artist_edit.html', artist=artist)
 
 
