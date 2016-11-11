@@ -2,6 +2,7 @@ from sqlalchemy import desc
 from database_setup import Base, Artist, ArtistGenre, Genre
 from database_setup import Influence, TopSongs
 
+
 def genres(session):
     return session.query(Genre).order_by(Genre.name).all()
 
@@ -19,10 +20,26 @@ def genre_by_id(session, id):
     return session.query(Genre).filter_by(gen_id=int(id)).one()
 
 
+def genres_by_artist(session, artist_id):
+    ''' Returns a list of all genre objects
+    corresponding to a specific artist '''
+    genre_objs = session.query(ArtistGenre).filter_by(artist=artist_id).all()
+    genres = []
+    for obj in genre_objs:
+        genre = session.query(Genre).filter_by(gen_id=obj.genre).one()
+        genres.append(genre)
+    return genres
+
+
 def artists(session, limit=None):
     artists = session.query(Artist).order_by(desc(Artist.created)).limit(limit)
     return artists
 
+
+def artist_by_url_name(session, url_name):
+    ''' Queries database for an artist by their url_name
+    and returns an artist object if found '''
+    return session.query(Artist).filter_by(url_name=url_name).one()
 
 def artist_by_database_id(session, art_id):
     ''' Queries database for artist and returns if found '''
