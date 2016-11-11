@@ -5,7 +5,7 @@ import pprint  # remove for production
 import datetime
 
 import database.get as get
-from database.database_helpers import listify, get_youtube_id
+from database.database_helpers import listify, listify_multi, get_youtube_id
 
 # Initializes python shell to interface with database
 from sqlalchemy import create_engine, desc
@@ -106,8 +106,9 @@ def db_get_artist(artist):
                       art_id=db_artist.art_id)
         if artist:
             artist['genres'] = get_artist_genres(session, artist['art_id'])
-            artist['top_songs'] = get_artist_top_songs(
+            song_objs = get.top_songs_by_artist(
                 session, artist['art_id'])
+            artist['top_songs'] = listify_multi(song_objs, 'name', 'youtube_id')
 
     except Exception, e:
         raise e
@@ -135,7 +136,6 @@ def db_get_recent_additions(num):
     ''' Returns a list of recently added artists num entries long '''
     session = DBSession()
     try:
-        #additions = get_recently_added_artists(session, num)
         artists = get.artists(session)
         artist_names = listify(artists, 'name')
     except Exception, e:
@@ -145,28 +145,6 @@ def db_get_recent_additions(num):
 
     return artist_names
 
-
-# def db_artist_edit(artist_id, data):
-#     ''' Updates an artist record in the database with user changes '''
-
-
-# def artist_by_spotify_id(session, spotify_id):
-#     """ Queries database for artist and returns if found """
-#     spotify_id = unicode(spotify_id)
-#     try:
-#         artist = session.query(Artist).filter_by(spotify_id=spotify_id).one()
-#         return artist
-#     except Exception, e:
-#         raise e
-
-
-# def get_recently_added_artists(session, num):
-#     ''' Returns a list of the first num recently added artists '''
-#     artists = session.query(Artist).order_by(desc(Artist.created)).limit(num)
-#     names = []
-#     for artist in artists:
-#         names.append(artist.name)
-#     return names
 
 
 def get_artist_genres(session, artist_id):
@@ -178,24 +156,6 @@ def get_artist_genres(session, artist_id):
         genre = session.query(Genre).filter_by(gen_id=obj.genre).one()
         genre_names.append(genre.name)
     return genre_names
-
-
-def get_artist_top_songs(session, artist_id):
-    ''' Returns a list of tuples containing artist top song
-    names and youtube video ids '''
-    song_objs = session.query(TopSongs).filter_by(
-        artist=artist_id).order_by(TopSongs.rank).all()
-    songs = []
-    for obj in song_objs:
-        songs.append((obj.name, obj.youtube_id))
-    return songs
-
-
-# def get_genre_by_name(session, name):
-#     ''' Searches database for a specific genre, by genre name.
-#     Returns a genre object corresponding to the name '''
-#     genre_name = unicode(name.lower())
-#     return session.query(Genre).filter_by(name=genre_name).one()
 
 
 def create_new_genres(session, new_genres):
@@ -222,15 +182,3 @@ def add_artist_genres(session, artist_id, genres):
                                        genre=genre_id)
         session.add(new_artist_genre)
 
-
-# def get_youtube_id(artist, song_name):
-#     ''' Searches youtube videos for an artist and song name,
-#     and returns a youtube video ID as a unicode string '''
-#     global GOOGLE_API_KEY
-#     url = 'https://www.googleapis.com/youtube/v3/search'
-#     headers = {'part': 'snippet',
-#                'q': '%s %s' % (artist, song_name),
-#                'key': GOOGLE_API_KEY}
-#     url += '?' + urllib.urlencode(headers)
-#     youtube_data = json.load(urllib2.urlopen(url))
-#     return youtube_data[u'items'][0][u'id'][u'videoId']

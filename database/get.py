@@ -1,6 +1,6 @@
 from sqlalchemy import desc
 from database_setup import Base, Artist, ArtistGenre, Genre
-
+from database_setup import Influence, TopSongs
 
 def genres(session):
     return session.query(Genre).order_by(Genre.name).all()
@@ -25,10 +25,17 @@ def artists(session, limit=None):
 
 
 def artist_by_database_id(session, art_id):
-    """ Queries database for artist and returns if found """
+    ''' Queries database for artist and returns if found '''
     return session.query(Artist).filter_by(art_id=art_id).one()
 
 
 def artist_by_spotify_id(session, spotify_id):
-    """ Queries database for artist and returns if found """
+    ''' Queries database for artist and returns if found '''
     return session.query(Artist).filter_by(spotify_id=spotify_id).one()
+
+
+def top_songs_by_artist(session, artist_id):
+    ''' Retrieve all top songs from database filtered by art_id,
+    and returns a list of database objects, ordered by rank '''
+    return session.query(TopSongs).filter_by(
+        artist=artist_id).order_by(TopSongs.rank).all()

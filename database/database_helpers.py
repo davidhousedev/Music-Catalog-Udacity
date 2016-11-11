@@ -10,6 +10,18 @@ def listify(objs, attr):
         attr_list.append(obj.serialize[attr])
     return attr_list
 
+def listify_multi(objs, *attrs):
+    ''' Iterates through database objs and returns a list of tuples
+    with the values resulting from: obj.attr '''
+    attr_list = []
+    for obj in objs:
+        song = []
+        for attr in attrs:
+            song.append(obj.serialize[attr])
+        print song
+        attr_list.append(tuple(song))
+    return attr_list
+
 def get_youtube_id(artist, song_name):
     ''' Searches youtube videos for an artist and song name,
     and returns a youtube video ID as a unicode string '''
