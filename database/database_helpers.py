@@ -4,6 +4,9 @@ import json
 from database_setup import Base, Artist
 from api_keys import GOOGLE_API_KEY
 
+# Define maximum number of top songs that should be stored in database
+TOP_SONG_LIMIT = 3
+
 
 def listify(objs, attr):
     ''' Returns a list of values of a specific database object attribute
@@ -27,7 +30,19 @@ def listify_multi(objs, *attrs):
     return attr_list
 
 
-def get_youtube_id(artist, song_name):
+def get_youtube_ids(artist_name, top_song_list):
+    ''' Returns a list of video ids corresponding to the param: top_song_list.
+    Video ids will be in the same order as the list of top songs '''
+    youtube_ids = []
+    for song in top_song_list:
+        vid_id = api_youtube_first_result(artist_name, song)
+        youtube_ids.append(vid_id)
+        if len(youtube_ids) == TOP_SONG_LIMIT:
+            break
+    return youtube_ids
+
+
+def api_youtube_first_result(artist, song_name):
     ''' Searches youtube videos for an artist and song name,
     and returns a youtube video ID as a unicode string '''
     global GOOGLE_API_KEY

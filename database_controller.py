@@ -8,14 +8,16 @@ import database.get as get
 import database.create as create
 import database.update as update
 import database.delete as delete
-from database.database_helpers import listify, listify_multi, get_youtube_id
-from database.database_helpers import api_spotify_top_tracks
+from database.database_helpers import listify, listify_multi, get_youtube_ids
+from database.database_helpers import api_spotify_top_tracks, api_youtube_first_result
 
 # Initializes python shell to interface with database
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Artist, ArtistGenre, Genre
 from database_setup import Influence, TopSongs
+
+from database.database_helpers import TOP_SONG_LIMIT
 
 # Connect to database
 engine = create_engine('sqlite:///catalog.db')
@@ -24,15 +26,11 @@ Base.metadata.bind = engine
 # Establish database connection session
 DBSession = sessionmaker(bind=engine)
 
-# Define maximum number of top songs that should be stored in database
-TOP_SONG_LIMIT = 3
-
 
 def db_add_artist(spotify_id):
     """ Queries Spotify by artist id for artist info and top tracks
     then adds artist to appropriate database tables
     Returns tuple ('add', artist_name) if successful """
-    get_youtube_id('radiohead', 'reckoner')
     # Retrieve artist information from Spotify
     url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
     data = json.load(urllib2.urlopen(url))
@@ -44,12 +42,7 @@ def db_add_artist(spotify_id):
     artist_top_songs = api_spotify_top_tracks(spotify_id)
 
     # Obtain video IDs from youtube corresponding to top songs
-    youtube_ids = []
-    for song in artist_top_songs:
-        vid_id = get_youtube_id(artist_name, song)
-        youtube_ids.append(vid_id)
-        if len(youtube_ids) == TOP_SONG_LIMIT:
-            break
+    youtube_ids = get_youtube_ids(artist_name, artist_top_songs)
 
     new_artist = Artist(name=artist_name,
                         spotify_id=spotify_id,
@@ -106,10 +99,11 @@ def db_get_artist(artist):
                       url_name=db_artist.url_name,
                       art_id=db_artist.art_id)
         if artist:
-            artist['genres'] = get.genres_by_artist(session, artist['art_id'])
-            song_objs = get.top_songs_by_artist(
-                session, artist['art_id'])
-            artist['top_songs'] = listify_multi(song_objs, 'name', 'youtube_id')
+            genre_objs = get.genres_by_artist(session, artist['art_id'])
+            artist['genres'] = listify(genre_objs, 'name')
+            song_objs = get.top_songs_by_artist(session, artist['art_id'])
+            artist['top_songs'] = listify_multi(
+                song_objs, 'name', 'youtube_id')
 
     except Exception, e:
         raise e
@@ -145,40 +139,3 @@ def db_get_recent_additions(num):
         session.close()
 
     return artist_names
-
-
-
-# def get_artist_genres(session, artist_id):
-#     ''' Returns a list of all genre names
-#     corresponding to a specific artist '''
-#     genre_objs = session.query(ArtistGenre).filter_by(artist=artist_id).all()
-#     genre_names = []
-#     for obj in genre_objs:
-#         genre = session.query(Genre).filter_by(gen_id=obj.genre).one()
-#         genre_names.append(genre.name)
-#     return genre_names
-
-
-# def create_new_genres(session, new_genres):
-#     ''' When passed a db session and a list of music genres,
-#     this function adds all new genres to database '''
-#     db_genres = get.genres(session)
-#     db_genre_names = []
-#     for genre in db_genres:
-#         db_genre_names.append(genre.name)
-#     # Add genres that are not currently in database
-#     for genre in new_genres:
-#         if genre not in db_genre_names:
-#             new_genre = Genre(name=genre,
-#                               created=datetime.datetime.utcnow())
-#             session.add(new_genre)
-
-
-def add_artist_genres(session, artist_id, genres):
-    ''' When passed a db session, a db art_id, and a list of genre strings,
-    updates the ArtistGenre table with a row linking the artist with a genre '''
-    for genre in genres:
-        genre_id = get.genre_by_name(session, genre).gen_id
-        new_artist_genre = ArtistGenre(artist=artist_id,
-                                       genre=genre_id)
-        session.add(new_artist_genre)
