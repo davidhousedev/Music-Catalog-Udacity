@@ -10,6 +10,7 @@ import database.update as update
 import database.delete as delete
 from database.database_helpers import listify, listify_multi, get_youtube_ids
 from database.database_helpers import api_spotify_top_tracks, api_youtube_first_result
+from database.database_helpers import api_spotify_artist
 
 # Initializes python shell to interface with database
 from sqlalchemy import create_engine, desc
@@ -31,48 +32,21 @@ def db_add_artist(spotify_id):
     """ Queries Spotify by artist id for artist info and top tracks
     then adds artist to appropriate database tables
     Returns tuple ('add', artist_name) if successful """
-    # Retrieve artist information from Spotify
-    url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
-    data = json.load(urllib2.urlopen(url))
-
-    artist_name = data[u'name']
-    artist_genres = data[u'genres']
-
-    # Retrieve artist top songs from Spotify
-    artist_top_songs = api_spotify_top_tracks(spotify_id)
-
-    # Obtain video IDs from youtube corresponding to top songs
-    youtube_ids = get_youtube_ids(artist_name, artist_top_songs)
-
-    new_artist = Artist(name=artist_name,
-                        spotify_id=spotify_id,
-                        url_name=artist_name.lower(),
-                        created=datetime.datetime.utcnow())
 
     session = DBSession()
     try:
-        session.add(new_artist)
-        session.commit()
+        artist_name, artist_genres = api_spotify_artist(spotify_id)
+        # Add artist record to database
+        create.artist(session, artist_name, spotify_id)
         # Retrieve new artist from DB, to use artist art_id
         artist_id = get.artist_by_spotify_id(session, spotify_id).art_id
         # Add any new genres to database
         create.genres(session, artist_genres)
-        session.commit()
-        # Retrieve up-to-date genres from database
-        db_genres = get.genres(session)
         # Add artist genres to database
         create.artist_genres(session, artist_id, artist_genres)
-        # Add artist top songs to database
-        if len(artist_top_songs) > TOP_SONG_LIMIT:
-            songs_len = TOP_SONG_LIMIT
-        else:
-            songs_len = len(artist_top_songs)
-        for i in xrange(songs_len):
-            new_top_song = TopSongs(artist=artist_id,
-                                    rank=i + 1,
-                                    name=artist_top_songs[i],
-                                    youtube_id=youtube_ids[i])
-            session.add(new_top_song)
+        # # Add artist top songs to database
+        create.top_songs(session, artist_name, spotify_id, artist_id)
+
         session.commit()
 
     except Exception, e:

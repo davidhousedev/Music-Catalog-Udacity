@@ -4,7 +4,18 @@ from database_setup import Base, Artist, ArtistGenre, Genre
 from database_setup import Influence, TopSongs
 
 import database.get as get
-from database.database_helpers import listify
+from database.database_helpers import listify, api_spotify_top_tracks
+from database.database_helpers import get_youtube_ids, TOP_SONG_LIMIT
+
+
+def artist(session, name, spotify_id):
+    ''' When passed an artist name and spotify_id,
+    creates an artist record in the database '''
+    new_artist = Artist(name=name,
+                        spotify_id=spotify_id,
+                        url_name=name.lower(),
+                        created=datetime.datetime.utcnow())
+    session.add(new_artist)
 
 def genres(session, new_genres):
     ''' When passed a db session and a list of music genres,
@@ -26,3 +37,18 @@ def artist_genres(session, artist_id, genre_names):
         new_artist_genre = ArtistGenre(artist=artist_id,
                                        genre=genre_id)
         session.add(new_artist_genre)
+
+def top_songs(session, artist_name, spotify_id, artist_id):
+    artist_top_songs = api_spotify_top_tracks(spotify_id)
+    youtube_ids = get_youtube_ids(artist_name, artist_top_songs)
+    # Add artist top songs to database
+    if len(artist_top_songs) > TOP_SONG_LIMIT:
+        songs_len = TOP_SONG_LIMIT
+    else:
+        songs_len = len(artist_top_songs)
+    for i in xrange(songs_len):
+        new_top_song = TopSongs(artist=artist_id,
+                                rank=i + 1,
+                                name=artist_top_songs[i],
+                                youtube_id=youtube_ids[i])
+        session.add(new_top_song)

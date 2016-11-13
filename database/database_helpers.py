@@ -54,6 +54,12 @@ def api_youtube_first_result(artist, song_name):
     youtube_data = json.load(urllib2.urlopen(url))
     return youtube_data[u'items'][0][u'id'][u'videoId']
 
+def api_spotify_artist(spotify_id):
+    ''' Returns an artist name and genres in a tuple
+    from a Spotify API call '''
+    url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
+    data = json.load(urllib2.urlopen(url))
+    return (data[u'name'], data[u'genres'])
 
 def api_spotify_top_tracks(spotify_id):
     ''' Returns a descending ordered list of top track names
