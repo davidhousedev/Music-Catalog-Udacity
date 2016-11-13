@@ -1,6 +1,5 @@
-import urllib
-import urllib2
-import json
+import json, urllib, urllib2
+from unicodedata import normalize
 from database_setup import Base, Artist
 from api_keys import GOOGLE_API_KEY
 
@@ -71,3 +70,10 @@ def api_spotify_top_tracks(spotify_id):
     for track in track_data[u'tracks']:
         artist_top_track.append(track[u'name'])
     return artist_top_track
+
+def url_name(name):
+    ''' Converts an artist or genre name into a url-friendly string.
+    Remove accent marks and replaces spaces with + '''
+    name = normalize('NFKD', name).encode('ascii', 'ignore').lower()
+    print 'Converted name to: %s' % urllib.quote_plus(name)
+    return urllib.quote_plus(name)

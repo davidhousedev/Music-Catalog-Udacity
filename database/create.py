@@ -6,14 +6,18 @@ from database_setup import Influence, TopSongs
 import database.get as get
 from database.database_helpers import listify, api_spotify_top_tracks
 from database.database_helpers import get_youtube_ids, TOP_SONG_LIMIT
+from database.database_helpers import url_name
 
 
 def artist(session, name, spotify_id):
     ''' When passed an artist name and spotify_id,
     creates an artist record in the database '''
+    print 'test'
+    encoded_name = url_name(name)
+    print encoded_name
     new_artist = Artist(name=name,
                         spotify_id=spotify_id,
-                        url_name=name.lower(),
+                        url_name=url_name(name),
                         created=datetime.datetime.utcnow())
     session.add(new_artist)
 
@@ -26,6 +30,7 @@ def genres(session, new_genres):
     for genre in new_genres:
         if genre not in db_genre_names:
             new_genre = Genre(name=genre,
+                              url_name=url_name(genre),
                               created=datetime.datetime.utcnow())
             session.add(new_genre)
 

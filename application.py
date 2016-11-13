@@ -1,5 +1,5 @@
 from helpers.http_helpers import parse_url, parse_edit_form_data
-import json
+import json, pprint
 
 from flask import Flask, url_for, render_template, request
 from flask import redirect, flash, jsonify
@@ -59,11 +59,11 @@ def artist_create():
             break
         message = db.db_add_artist(spotify_id)
         if message[0] == 'add':
-            flash('Added artist to database: %s' % message[1])
+            artist = db.db_get_artist(message[1])
 
-        obj = dict(artist_name=message[1],
+        obj = dict(artist_name=artist['name'],
                    spotify_id=spotify_id,
-                   artist_url=url_for('artist', artist=message[1]))
+                   artist_url=url_for('artist', artist=artist['url_name']))
         return json.dumps(obj)
     else:
         return render_template('artist_create.html')
@@ -77,6 +77,7 @@ def artist_edit(artist):
     """ Edit database entry of a specific artist """
     if request.method == 'POST':
         form_data = parse_edit_form_data(request.form)
+        pprint.pprint(form_data)
 
     artist = db.db_get_artist(parse_url(artist))
     return render_template('artist_edit.html', artist=artist)

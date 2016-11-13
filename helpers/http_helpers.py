@@ -1,10 +1,11 @@
-from urllib import unquote_plus
+from urllib import unquote
+from database.database_helpers import url_name
 
 def parse_url(url):
     ''' Replaces URL escapes with native values,
     and converts to int if string is all nums) '''
     if type(url) != int:
-        url = unquote_plus(url)
+        url = unquote(url)
     return url
 
 def parse_edit_form_data(form_data):

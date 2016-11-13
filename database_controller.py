@@ -10,7 +10,7 @@ import database.update as update
 import database.delete as delete
 from database.database_helpers import listify, listify_multi, get_youtube_ids
 from database.database_helpers import api_spotify_top_tracks, api_youtube_first_result
-from database.database_helpers import api_spotify_artist
+from database.database_helpers import api_spotify_artist, url_name
 
 # Initializes python shell to interface with database
 from sqlalchemy import create_engine, desc
@@ -35,17 +35,26 @@ def db_add_artist(spotify_id):
 
     session = DBSession()
     try:
+        print 'line 38'
         artist_name, artist_genres = api_spotify_artist(spotify_id)
+        print 'line 40'
         # Add artist record to database
+        print artist_name, spotify_id
         create.artist(session, artist_name, spotify_id)
+        print 'line 41'
         # Retrieve new artist from DB, to use artist art_id
         artist_id = get.artist_by_spotify_id(session, spotify_id).art_id
         # Add any new genres to database
         create.genres(session, artist_genres)
+        print 'line 46'
         # Add artist genres to database
         create.artist_genres(session, artist_id, artist_genres)
+        print 'line 48'
         # # Add artist top songs to database
-        create.top_songs(session, artist_name, spotify_id, artist_id)
+        create.top_songs(session,
+                         url_name(artist_name),
+                         spotify_id,
+                         artist_id)
 
         session.commit()
 
@@ -55,7 +64,7 @@ def db_add_artist(spotify_id):
     finally:
         session.close()
 
-    return ('add', artist_name.lower())
+    return ('add', artist_id)
 
 
 def db_get_artist(artist):
@@ -68,7 +77,7 @@ def db_get_artist(artist):
             db_artist = get.artist_by_database_id(session, artist)
         else:
             db_artist = get.artist_by_url_name(session, artist)
-
+        print 'artist url name is %s' % db_artist.url_name
         artist = dict(name=db_artist.name,
                       url_name=db_artist.url_name,
                       art_id=db_artist.art_id)
@@ -86,6 +95,9 @@ def db_get_artist(artist):
 
     return artist
 
+def db_update_artist(form_data):
+    ''' Updates database entry for an artist, genres, and top_songs
+    based on information supplied by user form data '''
 
 def db_get_all_genres():
     ''' Returns a list containing genre names '''

@@ -24,8 +24,7 @@ class Genre(Base):
     Columns:
         * (PRIMARY) gen_id: Int, database id for genre
         * (REQ) name: Str, text name of genre
-        * emergence: Str, Aproximate date when
-            genre emerged in history
+        * (REQ) url_name: Str, url-friendly name of genre
         * created: Str, time genre created in database
         * updated: Str, last update time in database,
             defaults to datetime.utcnow """
@@ -33,6 +32,7 @@ class Genre(Base):
 
     gen_id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
+    url_name = Column(String(100), nullable=False)
     created = Column(String(100))
     updated = Column(String(100), default=datetime.datetime.utcnow)
 
@@ -41,6 +41,7 @@ class Genre(Base):
         # Returns object in easily serializable format
         return {
             'name' : self.name,
+            'url_name' : self.url_name,
             'gen_id' : self.gen_id,
             'created' : self.created,
             'updated' : self.updated
