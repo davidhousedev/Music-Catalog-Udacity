@@ -32,7 +32,7 @@ class Genre(Base):
 
     gen_id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    url_name = Column(String(100), nullable=False)
+    url_name = Column(String(100), nullable=False, unique=True)
     created = Column(String(100))
     updated = Column(String(100), default=datetime.datetime.utcnow)
 
@@ -89,7 +89,7 @@ class Artist(Base):
     art_id = Column(Integer, primary_key=True)
     spotify_id = Column(String(50), unique=True)
     name = Column(String(300), nullable=False)
-    url_name = Column(String(3000), nullable=False)
+    url_name = Column(String(3000), nullable=False, unique=True)
     created = Column(String(100), nullable=False)
     updated = Column(String(100), default=datetime.datetime.utcnow)
 
