@@ -95,9 +95,23 @@ def db_get_artist(artist):
 
     return artist
 
-def db_update_artist(form_data):
+
+def db_update_artist(form_data, artist_id):
     ''' Updates database entry for an artist, genres, and top_songs
     based on information supplied by user form data '''
+    session = DBSession()
+    try:
+        update.artist(session, form_data['name'], artist_id)
+        session.commit()
+    except Exception, e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+    return ('update', artist_id)
+
+
 
 def db_get_all_genres():
     ''' Returns a list containing genre names '''

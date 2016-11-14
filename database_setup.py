@@ -40,11 +40,11 @@ class Genre(Base):
     def serialize(self):
         # Returns object in easily serializable format
         return {
-            'name' : self.name,
-            'url_name' : self.url_name,
-            'gen_id' : self.gen_id,
-            'created' : self.created,
-            'updated' : self.updated
+            'name': self.name,
+            'url_name': self.url_name,
+            'gen_id': self.gen_id,
+            'created': self.created,
+            'updated': self.updated
         }
 
 
@@ -67,8 +67,8 @@ class Influence(Base):
     def serialize(self):
         # Returns object in easily serializable format
         return {
-            'parent' : self.parent,
-            'child' : self.child
+            'parent': self.parent,
+            'child': self.child
         }
 
 
@@ -97,11 +97,11 @@ class Artist(Base):
     def serialize(self):
         # Returns object in easily serializable format
         return {
-            'name' : self.name,
-            'spotify_id' : self.spotify_id,
-            'art_id' : self.art_id,
-            'created' : self.created,
-            'updated' : self.updated
+            'name': self.name,
+            'spotify_id': self.spotify_id,
+            'art_id': self.art_id,
+            'created': self.created,
+            'updated': self.updated
         }
 
 
@@ -127,11 +127,12 @@ class TopSongs(Base):
     def serialize(self):
         # Returns object in easily serializable format
         return {
-            'name' : self.name,
-            'rank' : self.rank,
-            'artist' : self.artist,
-            'youtube_id' : self.youtube_id
+            'name': self.name,
+            'rank': self.rank,
+            'artist': self.artist,
+            'youtube_id': self.youtube_id
         }
+
 
 class ArtistGenre(Base):
 
@@ -151,8 +152,8 @@ class ArtistGenre(Base):
     def serialize(self):
         # Returns object in easily serializable format
         return {
-            'artist' : self.artist,
-            'genre' : self.genre
+            'artist': self.artist,
+            'genre': self.genre
         }
 
 engine = create_engine('sqlite:///catalog.db')
