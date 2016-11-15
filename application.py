@@ -81,8 +81,13 @@ def artist_edit(artist):
         pprint.pprint(form_data)
         db.db_update_artist(form_data, artist['art_id'])
         return redirect(url_for('artist', artist=artist['art_id']))
-
-    return render_template('artist_edit.html', artist=artist)
+    # Remove any artist genres from the list of total database genres
+    db_genres = db.db_get_all_genres()
+    for artist_genre in artist['genres']:
+        db_genres.remove(artist_genre)
+    return render_template('artist_edit.html',
+                           artist=artist,
+                           db_genres=db_genres)
 
 
 @app.route('/artist/delete/<int:artist>/')
