@@ -102,6 +102,7 @@ def db_update_artist(form_data, artist_id):
     session = DBSession()
     try:
         update.artist(session, form_data['name'], artist_id)
+        update.artist_genres(session, form_data['genres'], artist_id)
         session.commit()
     except Exception, e:
         session.rollback()

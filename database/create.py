@@ -34,6 +34,13 @@ def genres(session, new_genres):
                               created=datetime.datetime.utcnow())
             session.add(new_genre)
 
+def artist_genre(session, artist_id, genre_name):
+    ''' Creates a single artist genre in the database '''
+    genre_id = get.genre_by_name(session, genre_name).gen_id
+    new_artist_genre = ArtistGenre(artist=artist_id,
+                                   genre=genre_id)
+    session.add(new_artist_genre)
+
 def artist_genres(session, artist_id, genre_names):
     ''' When passed a db session, a db art_id, and a list of genre strings,
     updates the ArtistGenre table with a row linking the artist with a genre '''
