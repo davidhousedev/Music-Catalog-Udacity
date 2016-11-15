@@ -140,7 +140,7 @@ def db_get_recent_additions(num):
     session = DBSession()
     try:
         artists = get.artists(session, num)
-        artist_names = listify(artists, 'name')
+        artist_names = listify_multi(artists, 'name', 'url_name')
     except Exception, e:
         raise e
     finally:

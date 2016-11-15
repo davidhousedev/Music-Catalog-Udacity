@@ -89,7 +89,7 @@ class Artist(Base):
     art_id = Column(Integer, primary_key=True)
     spotify_id = Column(String(50), unique=True)
     name = Column(String(300), nullable=False)
-    url_name = Column(String(3000), nullable=False, unique=True)
+    url_name = Column(String(300), nullable=False, unique=True)
     created = Column(String(100), nullable=False)
     updated = Column(String(100), default=datetime.datetime.utcnow)
 
@@ -98,6 +98,7 @@ class Artist(Base):
         # Returns object in easily serializable format
         return {
             'name': self.name,
+            'url_name': self.url_name,
             'spotify_id': self.spotify_id,
             'art_id': self.art_id,
             'created': self.created,
