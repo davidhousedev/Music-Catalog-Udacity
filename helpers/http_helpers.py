@@ -24,6 +24,7 @@ def parse_edit_form_data(form_data):
             continue
         # Organize songs by numerical ranking in data dictionary
         if key[0] == r'song':
+            key[2] = int(key[2]) + 1
             print key[0], key[1], key[2]
             if key[2] not in data['top_songs']:
                 data['top_songs'][key[2]] = {}

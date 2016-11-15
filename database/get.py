@@ -41,6 +41,7 @@ def artist_by_url_name(session, url_name):
     and returns an artist object if found '''
     return session.query(Artist).filter_by(url_name=url_name).one()
 
+
 def artist_by_database_id(session, art_id):
     ''' Queries database for artist and returns if found '''
     return session.query(Artist).filter_by(art_id=art_id).one()
@@ -49,6 +50,11 @@ def artist_by_database_id(session, art_id):
 def artist_by_spotify_id(session, spotify_id):
     ''' Queries database for artist and returns if found '''
     return session.query(Artist).filter_by(spotify_id=spotify_id).one()
+
+
+def top_song(session, artist_id, rank):
+    print 'looking up: artist-%s, rank-%s' % (artist_id, rank)
+    return session.query(TopSongs).filter_by(artist=artist_id, rank=rank).one()
 
 
 def top_songs_by_artist(session, artist_id):

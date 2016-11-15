@@ -99,10 +99,18 @@ def db_get_artist(artist):
 def db_update_artist(form_data, artist_id):
     ''' Updates database entry for an artist, genres, and top_songs
     based on information supplied by user form data '''
+    pprint.pprint(form_data)
     session = DBSession()
     try:
-        update.artist(session, form_data['name'], artist_id)
-        update.artist_genres(session, form_data['genres'], artist_id)
+        update.artist(session,
+                      form_data['name'],
+                      artist_id)
+        update.artist_genres(session,
+                      form_data['genres'],
+                      artist_id)
+        update.artist_top_songs(session,
+                                form_data['top_songs'],
+                                artist_id)
         session.commit()
     except Exception, e:
         session.rollback()
@@ -111,7 +119,6 @@ def db_update_artist(form_data, artist_id):
         session.close()
 
     return ('update', artist_id)
-
 
 
 def db_get_all_genres():

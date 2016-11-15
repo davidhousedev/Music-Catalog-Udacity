@@ -6,6 +6,7 @@ from database_setup import Base, Artist, ArtistGenre, Genre
 from database_setup import Influence, TopSongs
 from database.database_helpers import url_name, listify
 
+
 def artist(session, name, art_id):
     ''' Updates an Artist row on the database with a new name,
     and updates the artist's url_name to reflect changes '''
@@ -14,6 +15,7 @@ def artist(session, name, art_id):
     artist.name = name
     artist.url_name = url_name(name)
     session.add(artist)
+
 
 def artist_genres(session, genre_names, artist_id):
     ''' Checkes a list of genre names against the genres currently
@@ -27,3 +29,14 @@ def artist_genres(session, genre_names, artist_id):
     for db_genre in db_artist_genres:  # Delete any existing genres
         if db_genre.name not in genre_names:
             delete.artist_genre(session, artist_id, db_genre.gen_id)
+
+
+def artist_top_songs(session, songs_obj, artist_id):
+    ''' For each song in songs_obj, updates corresponding
+    artist top songs to reflect changes in songs_obj '''
+    for song, data in songs_obj.iteritems():
+        top_song = get.top_song(session, artist_id, song)
+        if top_song.name != data['title'] or top_song.youtube_id != data['id']:
+            top_song.name = data['title']
+            top_song.youtube_id = data['id']
+            session.add(top_song)

@@ -81,7 +81,7 @@ def artist_edit(artist):
         pprint.pprint(form_data)
         db.db_update_artist(form_data, artist['art_id'])
         return redirect(url_for('artist', artist=artist['art_id']))
-    # Remove any artist genres from the list of total database genres
+    # Prevent any artist genres from being printed as unchecked in view
     db_genres = db.db_get_all_genres()
     for artist_genre in artist['genres']:
         db_genres.remove(artist_genre)
