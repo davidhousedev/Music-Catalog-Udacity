@@ -91,15 +91,16 @@ def artist_edit(artist):
                            db_genres=db_genres)
 
 
-@app.route('/artist/delete/<int:artist>/')
-@app.route('/artist/delete/<artist>/')
+@app.route('/artist/delete/<int:artist>/',
+           methods=['GET', 'POST'])
+@app.route('/artist/delete/<artist>/',
+           methods=['GET', 'POST'])
 def artist_delete(artist):
     """ Delete an artist from the database """
-    artist = dict(name='Radiohead',
-                  url_name='radiohead',
-                  emergence='1990',
-                  genres=['Rock', 'Alternative'],
-                  top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
+    artist = db.db_get_artist(artist)
+    if request.method == 'POST':
+        db.db_delete_artist(artist['art_id'])
+        return redirect(url_for('catalog'))
     return render_template('artist_delete.html', artist=artist)
 
 

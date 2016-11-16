@@ -35,21 +35,16 @@ def db_add_artist(spotify_id):
 
     session = DBSession()
     try:
-        print 'line 38'
         artist_name, artist_genres = api_spotify_artist(spotify_id)
-        print 'line 40'
         # Add artist record to database
         print artist_name, spotify_id
         create.artist(session, artist_name, spotify_id)
-        print 'line 41'
         # Retrieve new artist from DB, to use artist art_id
         artist_id = get.artist_by_spotify_id(session, spotify_id).art_id
         # Add any new genres to database
         create.genres(session, artist_genres)
-        print 'line 46'
         # Add artist genres to database
         create.artist_genres(session, artist_id, artist_genres)
-        print 'line 48'
         # # Add artist top songs to database
         create.top_songs(session,
                          url_name(artist_name),
@@ -119,6 +114,26 @@ def db_update_artist(form_data, artist_id):
         session.close()
 
     return ('update', artist_id)
+
+def db_delete_artist(artist_id):
+    ''' Deletes an artist, and its related genre and
+    top songs relationships from the database '''
+    session = DBSession()
+    try:
+        artist = get.artist_by_database_id(session, artist_id)
+        delete.database_object(session, artist)
+        genres = get.artist_genres_by_artist(session, artist_id)
+        songs = get.top_songs_by_artist(session, artist_id)
+        delete.database_objects(session, genres, songs)
+        session.commit()
+    except Exception, e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+    return ('delete', artist_id)
+
 
 
 def db_get_all_genres():

@@ -62,3 +62,9 @@ def top_songs_by_artist(session, artist_id):
     and returns a list of database objects, ordered by rank '''
     return session.query(TopSongs).filter_by(
         artist=artist_id).order_by(TopSongs.rank).all()
+
+def artist_genres_by_artist(session, artist_id):
+    ''' Retrieves all ArtistGenre rows corresponding
+    to a specific artist '''
+    return session.query(ArtistGenre).filter_by(
+        artist=artist_id).all()

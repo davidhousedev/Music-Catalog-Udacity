@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Deleting {{artist.name}}{% endblock %}
+{% block title %}Deleting {{artist['name']}}{% endblock %}
 {% block head %}
     {# Page-specific JS and CSS #}
 {% endblock %}
 
 {% block content %}
-    <h2>Are you sure you want to delete {{artist.name}}?</h2>
+    <h2>Are you sure you want to delete {{artist['name']}}?</h2>
     {% for key, value in artist.iteritems() %}
         <h3>{{key}}: <small>{{value}}</small></h3>
     {% endfor %}
     <form method="POST">
         <button>Delete</button>
-        <a href="{{url_for('artist', artist=artist.url_name)}}">Cancel</a>
+        <a href="{{url_for('artist', artist=artist['url_name'])}}">Cancel</a>
     </form>
 {% endblock %}
