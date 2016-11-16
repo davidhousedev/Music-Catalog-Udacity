@@ -110,19 +110,7 @@ def artist_delete(artist):
 @app.route('/genre/<genre>/')
 def genre(genre):
     """ Displays all artists corresponding to a specific genre """
-    radiohead = dict(name='Radiohead',
-                     url_name='radiohead',
-                     emergence='1990',
-                     genres=['Rock', 'Alternative'],
-                     top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
-    seratones = dict(name='Seratones',
-                     url_name='seratones',
-                     emergence='2016',
-                     genres=['Rock', 'Indie'],
-                     top_songs=['Don\'t Need It', 'Necromancer', 'Chandelier'])
-    genre = dict(name='Alternative',
-                 emergence='1980')
-    artists = [radiohead, seratones]
+    genre, artists = db.db_get_genre(parse_url(genre))
     return render_template('genre.html',
                            genre=genre,
                            artists=artists)

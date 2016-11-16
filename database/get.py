@@ -13,6 +13,10 @@ def genre_by_name(session, name):
     genre_name = name.lower()
     return session.query(Genre).filter_by(name=genre_name).one()
 
+def genre_by_url_name(session, url_name):
+    ''' Searches database for a specific genre, by genre.url_name.
+    Returns a genre object corresponding to the name '''
+    return session.query(Genre).filter_by(url_name=url_name).one()
 
 def genre_by_id(session, id):
     ''' Searches database for a specific genre, by gen_id.
@@ -52,6 +56,21 @@ def artist_by_spotify_id(session, spotify_id):
     return session.query(Artist).filter_by(spotify_id=spotify_id).one()
 
 
+def artists_by_genre(session, genre_id):
+    ''' Returns a list of all artist objects corresponding
+    to a specific genre_id '''
+    artist_genres = session.query(ArtistGenre).filter_by(genre=genre_id).all()
+    artist_objs = []
+    print 'line 60'
+    for artist_genre in artist_genres:
+        print artist_genre.artist
+        artist = session.query(Artist).filter_by(
+            art_id=artist_genre.artist).one()
+        artist_objs.append(artist)
+    return sorted(artist_objs, key=__index_to_name)
+
+
+
 def top_song(session, artist_id, rank):
     print 'looking up: artist-%s, rank-%s' % (artist_id, rank)
     return session.query(TopSongs).filter_by(artist=artist_id, rank=rank).one()
@@ -68,3 +87,11 @@ def artist_genres_by_artist(session, artist_id):
     to a specific artist '''
     return session.query(ArtistGenre).filter_by(
         artist=artist_id).all()
+
+
+# Helpers
+
+def __index_to_name(db_obj):
+    ''' Returns the name attribute of a database object
+    Used for sorting objects in alphabetical order by name '''
+    return db_obj.name

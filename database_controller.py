@@ -135,6 +135,23 @@ def db_delete_artist(artist_id):
     return ('delete', artist_id)
 
 
+def db_get_genre(genre):
+    ''' Returns a tuple containing a genre name,
+    and a list of all artist_ids corresponding to that genre '''
+    session = DBSession()
+    try:
+        if type(genre) is int:
+            db_genre = get.genre_by_id(session, genre)
+        else:
+            db_genre = get.genre_by_url_name(session, genre)
+        print 'line 147'
+        artists = get.artists_by_genre(session, db_genre.gen_id)
+    except Exception, e:
+        raise e
+    finally:
+        session.close()
+    return (db_genre.name, artists)
+
 
 def db_get_all_genres():
     ''' Returns a list containing genre names '''
