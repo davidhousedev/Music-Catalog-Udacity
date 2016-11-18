@@ -1,26 +1,14 @@
+from datetime import datetime
+import json, pprint
+
 from helpers.http_helpers import parse_url, parse_edit_form_data
 from helpers.http_helpers import parse_genre_form_data
-import json, pprint
 
 from flask import Flask, url_for, render_template, request
 from flask import redirect, flash, jsonify
 
 import database_controller as db
 from database.database_helpers import url_name, listify
-
-# # Initializes python shell to interface with database
-# from sqlalchemy import create_engine
-# from sqlalchemy.orm import sessionmaker
-# from database_setup import Base, Artist, ArtistGenre, Genre
-# from database_setup import Influence, TopSongs
-
-# # Connect to database
-# engine = create_engine('sqlite:///catalog.db')
-# Base.metadata.bind = engine
-
-# # Establish database connection session
-# DBSession = sessionmaker(bind=engine)
-# session = DBSession()
 
 app = Flask(__name__)
 

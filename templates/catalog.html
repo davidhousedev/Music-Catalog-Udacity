@@ -4,13 +4,20 @@
     {# Page-specific JS and CSS #}
 {% endblock %}
 {% block content %}
-    <h1>Music Catalog</h1>
-    <h2>Genres</h2>
-        {% for genre in genres %}
-            {{genre.name}}
-        {% endfor %}
+    <div class="col-xs-6">
+        <h2>Genres</h2>
+        <ul>
+            {% for genre in genres %}
+                <li>
+                    <a class="text-capitalize" href="{{url_for('genre', genre=genre.url_name)}}">{{genre.name}}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+    </div>
+
     <h2>Recent Additions</h2>
-        {% for item in recent_items %}
-            <a href="{{url_for('artist', artist=item[1])}}">{{item[0]}}</a>
+        {% for artist in recent_items %}
+            <a href="{{url_for('artist', artist=artist.url_name)}}">{{artist.name}}</a>
         {% endfor %}
 {% endblock %}
