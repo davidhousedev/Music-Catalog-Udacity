@@ -88,6 +88,11 @@ def artist_genres_by_artist(session, artist_id):
     return session.query(ArtistGenre).filter_by(
         artist=artist_id).all()
 
+def artist_genres_by_genre(session, genre_id):
+    ''' Retrieves all ArtistGenre rows corresponding
+    to a specific genre '''
+    return session.query(ArtistGenre).filter_by(
+        genre=genre_id).all()
 
 def influences_by_genre_id(session, genre_id):
     ''' Returns a list of genre objects that are all influenced

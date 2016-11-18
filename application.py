@@ -143,7 +143,7 @@ def genre_create():
            methods=['GET', 'POST'])
 def genre_edit(genre):
     """ Edit a specific genre """
-    genre, gen_artists, gen_influences = db.db_get_genre(genre)
+    genre, gen_artists, gen_influences = db.db_get_genre(parse_url(genre))
     if request.method == 'POST':
         form_data = parse_genre_form_data(request.form)
         db.db_edit_genre(form_data['name'],
@@ -171,12 +171,16 @@ def genre_edit(genre):
                            db_genres=db_genres)
 
 
-@app.route('/genre/delete/<int:genre>/')
-@app.route('/genre/delete/<genre>/')
+@app.route('/genre/delete/<int:genre>/',
+           methods=['GET', 'POST'])
+@app.route('/genre/delete/<genre>/',
+           methods=['GET', 'POST'])
 def genre_delete(genre):
     """ Delete a specific genre """
-    genre = dict(name='Alternative',
-                 artists=[2])
+    genre = db.db_get_genre(parse_url(genre))[0]
+    if request.method == 'POST':
+        db.db_delete_genre(genre.gen_id)
+        return redirect(url_for('catalog'))
     return render_template('genre_delete.html', genre=genre)
 
 

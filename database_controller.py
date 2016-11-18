@@ -148,7 +148,7 @@ def db_delete_artist(artist_id):
 
 
 def db_get_genre(genre):
-    ''' Returns a tuple containing a genre name,
+    ''' Returns a tuple containing a genre object,
     a list of all artist_ids corresponding to that genre,
     and a list of genres influenced by that genre '''
     session = DBSession()
@@ -219,6 +219,22 @@ def db_edit_genre(name, artists, influences, genre_id):
 def db_delete_genre(genre_id):
     ''' Deletes a genre, and associated ArtistGenre and Influence
     rows from the database '''
+    session = DBSession()
+    try:
+        genre = get.genre_by_id(session, genre_id)
+        delete.database_object(session, genre)
+        artist_genres = get.artist_genres_by_genre(session, genre_id)
+        delete.database_objects(session, artist_genres)
+        influences = get.influences_by_genre_id(session, genre_id)
+        delete.database_objects(session, influences)
+        session.commit()
+    except Exception, e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+    return ('delete', genre_id)
+
 
 def db_get_recent_additions(num):
     ''' Returns a list of recently added artists num entries long '''
