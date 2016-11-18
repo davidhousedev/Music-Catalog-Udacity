@@ -90,6 +90,18 @@ def db_get_artist(artist):
 
     return artist
 
+def db_get_all_artists():
+    ''' Returns a list of artist objects containing all artists
+    in the database '''
+    session = DBSession()
+    try:
+        artists = get.artists(session)
+    except Exception, e:
+        raise e
+    finally:
+        session.close()
+    return artists
+
 
 def db_update_artist(form_data, artist_id):
     ''' Updates database entry for an artist, genres, and top_songs
@@ -137,8 +149,10 @@ def db_delete_artist(artist_id):
 
 def db_get_genre(genre):
     ''' Returns a tuple containing a genre name,
-    and a list of all artist_ids corresponding to that genre '''
+    a list of all artist_ids corresponding to that genre,
+    and a list of genres influenced by that genre '''
     session = DBSession()
+    print 'trying to get genre: %s' % genre
     try:
         if type(genre) is int:
             db_genre = get.genre_by_id(session, genre)
@@ -146,11 +160,12 @@ def db_get_genre(genre):
             db_genre = get.genre_by_url_name(session, genre)
         print 'line 147'
         artists = get.artists_by_genre(session, db_genre.gen_id)
+        influences = get.influences_by_genre_id(session, db_genre.gen_id)
     except Exception, e:
         raise e
     finally:
         session.close()
-    return (db_genre.name, artists)
+    return (db_genre.name, artists, influences)
 
 
 def db_get_all_genres():
@@ -158,13 +173,30 @@ def db_get_all_genres():
     session = DBSession()
     try:
         genres = get.genres(session)
-        genre_names = listify(genres, 'name')
     except Exception, e:
         raise e
     finally:
         session.close()
 
-    return genre_names
+    return genres
+
+
+def db_create_genre(name, artists, influences):
+    session = DBSession()
+    try:
+        new_genre = create.genre(session, name)
+        for artist_id in artists:
+            create.artist_genre(session, artist_id, name)
+        new_genre_id = get.genre_by_url_name(session, new_genre).gen_id
+        for genre_id in influences:
+            create.influence(session, new_genre_id, genre_id)
+        session.commit()
+    except Exception, e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+    return ('add', new_genre)
 
 
 def db_get_recent_additions(num):

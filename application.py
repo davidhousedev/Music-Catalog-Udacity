@@ -1,4 +1,5 @@
 from helpers.http_helpers import parse_url, parse_edit_form_data
+from helpers.http_helpers import parse_genre_form_data
 import json, pprint
 
 from flask import Flask, url_for, render_template, request
@@ -110,27 +111,29 @@ def artist_delete(artist):
 @app.route('/genre/<genre>/')
 def genre(genre):
     """ Displays all artists corresponding to a specific genre """
-    genre, artists = db.db_get_genre(parse_url(genre))
+    genre, artists, influences = db.db_get_genre(parse_url(genre))
     return render_template('genre.html',
                            genre=genre,
-                           artists=artists)
+                           artists=artists,
+                           influences=influences)
 
 
-@app.route('/genre/create/')
+@app.route('/genre/create/',
+           methods=['GET', 'POST'])
 def genre_create():
     """ Create a new genre in the database """
-    radiohead = dict(name='Radiohead',
-                     url_name='radiohead',
-                     emergence='1990',
-                     genres=['Rock', 'Alternative'],
-                     top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
-    seratones = dict(name='Seratones',
-                     url_name='seratones',
-                     emergence='2016',
-                     genres=['Rock', 'Indie'],
-                     top_songs=['Don\'t Need It', 'Necromancer', 'Chandelier'])
-    artists = [radiohead, seratones]
-    return render_template('genre_create.html', artists=artists)
+    artists = db.db_get_all_artists()
+    genres = db.db_get_all_genres()
+    if request.method == 'POST':
+        form_data = parse_genre_form_data(request.form)
+        genre_name = db.db_create_genre(form_data['name'],
+                                        form_data['artists'],
+                                        form_data['influences'])[1]
+        return redirect(url_for('genre', genre=genre_name))
+
+    return render_template('genre_create.html',
+                           artists=artists,
+                           genres=genres)
 
 
 @app.route('/genre/edit/<int:genre>/')

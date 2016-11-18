@@ -21,18 +21,24 @@ def artist(session, name, spotify_id):
                         created=datetime.datetime.utcnow())
     session.add(new_artist)
 
+def genre(session, name):
+    ''' Creates a new row in the Genre table '''
+    new_genre = Genre(name=name,
+                      url_name=url_name(name),
+                      created=datetime.datetime.utcnow())
+    session.add(new_genre)
+    print 'returning %s' % new_genre.url_name
+    return new_genre.url_name
+
 def genres(session, new_genres):
     ''' When passed a db session and a list of music genres,
     this function adds all new genres to database '''
     db_genres = get.genres(session)
     db_genre_names = listify(db_genres, 'name')
     # Add genres that are not currently in database
-    for genre in new_genres:
-        if genre not in db_genre_names:
-            new_genre = Genre(name=genre,
-                              url_name=url_name(genre),
-                              created=datetime.datetime.utcnow())
-            session.add(new_genre)
+    for gen_name in new_genres:
+        if gen_name not in db_genre_names:
+            genre(session, gen_name)
 
 def artist_genre(session, artist_id, genre_name):
     ''' Creates a single artist genre in the database '''
@@ -64,3 +70,9 @@ def top_songs(session, artist_name, spotify_id, artist_id):
                                 name=artist_top_songs[i],
                                 youtube_id=youtube_ids[i])
         session.add(new_top_song)
+
+def influence(session, parent_id, child_id):
+    ''' Creates an Influence row, linking the parent genre
+    to the child genre by genre database id '''
+    inf = Influence(parent=parent_id, child=child_id)
+    session.add(inf)

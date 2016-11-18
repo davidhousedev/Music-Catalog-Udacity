@@ -31,3 +31,21 @@ def parse_edit_form_data(form_data):
             data['top_songs'][key[2]][key[1]] = value
             continue
     return data
+
+def parse_genre_form_data(form_data):
+    ''' Parses form data derived from a genre creation or edit,
+    and returns a dictionary with the form data organized by data type '''
+    genre = dict(name=None,
+                 influences=[],
+                 artists=[])
+    for item in form_data:
+        if item == 'name':
+            genre['name'] = form_data['name']
+        else:
+            item_split = item.split('-')
+            if item_split[0] == 'artist':
+                genre['artists'].append(int(item_split[1]))
+            else:
+                genre['influences'].append(int(item_split[1]))
+    return genre
+

@@ -89,6 +89,16 @@ def artist_genres_by_artist(session, artist_id):
         artist=artist_id).all()
 
 
+def influences_by_genre_id(session, genre_id):
+    ''' Returns a list of genre objects that are all influenced
+    by the parameter: genre_id '''
+    influence_objs = session.query(Influence).filter_by(parent=genre_id).all()
+    genres = []
+    for inf in influence_objs:
+        gen = session.query(Genre).filter_by(gen_id=inf.child).one()
+        genres.append(gen)
+    return sorted(genres, key=__index_to_name)
+
 # Helpers
 
 def __index_to_name(db_obj):

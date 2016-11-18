@@ -10,11 +10,19 @@
         <label for="name">Name</label>
         <input type="text" name="name" id="name"/>
         <br>
-        <label>Genres
+        <label>Artists
             {% for artist in artists %}
                 <br>
                 <label for="{{artist.name}}">{{artist.name}}</label>
-                <input type="checkbox" name="{{artist.name}}" id="{{artist.name}}"/>
+                <input type="checkbox" name="artist-{{artist.art_id}}" id="{{artist.name}}"/>
+            {% endfor %}
+        </label>
+        <br>
+        <label>Genres
+            {% for genre in genres %}
+                <br>
+                <label for="{{genre.name}}">{{genre.name}}</label>
+                <input type="checkbox" name="genre-{{genre.gen_id}}" id="{{genre.name}}"/>
             {% endfor %}
         </label>
         <br>

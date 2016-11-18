@@ -11,12 +11,12 @@
         <input type="text" name="name" id="name" value="{{artist.name}}" />
         <label>Genres
             {% for genre in artist.genres %}
-                <label for="{{genre}}">{{genre}}</label>
-                <input type="checkbox" name="genre-{{genre}}" id={{genre}} checked/>
+                <label for="{{genre.name}}">{{genre}}</label>
+                <input type="checkbox" name="genre-{{genre.name}}" id={{genre.name}} checked/>
             {% endfor %}
             {% for genre in db_genres %}
-                <label for="{{genre}}">{{genre}}</label>
-                <input type="checkbox" name="genre-{{genre}}" id={{genre}} />
+                <label for="{{genre.name}}">{{genre}}</label>
+                <input type="checkbox" name="genre-{{genre.name}}" id={{genre.name}} />
             {% endfor %}
         </label>
         <label>Top Songs
