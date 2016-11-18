@@ -165,7 +165,7 @@ def db_get_genre(genre):
         raise e
     finally:
         session.close()
-    return (db_genre.name, artists, influences)
+    return (db_genre, artists, influences)
 
 
 def db_get_all_genres():
@@ -198,6 +198,27 @@ def db_create_genre(name, artists, influences):
         session.close()
     return ('add', new_genre)
 
+
+def db_edit_genre(name, artists, influences, genre_id):
+    ''' Updates a specified genre's name, artist associations,
+    and genre influence associations '''
+    session = DBSession()
+    try:
+        print name, artists, influences, genre_id
+        update.genre(session, name, genre_id)
+        update.artist_genres_by_genre(session, artists, genre_id)
+        update.influences(session, influences, genre_id)
+        session.commit()
+    except Exception, e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+
+def db_delete_genre(genre_id):
+    ''' Deletes a genre, and associated ArtistGenre and Influence
+    rows from the database '''
 
 def db_get_recent_additions(num):
     ''' Returns a list of recently added artists num entries long '''

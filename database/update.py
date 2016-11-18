@@ -40,3 +40,37 @@ def artist_top_songs(session, songs_obj, artist_id):
             top_song.name = data['title']
             top_song.youtube_id = data['id']
             session.add(top_song)
+
+def genre(session, name, gen_id):
+    ''' Updates a specific genre with a new name,
+    and updates the genre's url_name to reflect changes '''
+    genre = session.query(Genre).filter_by(gen_id=gen_id).one()
+    genre.name = name
+    genre.url_name = url_name(name)
+    session.add(genre)
+
+def artist_genres_by_genre(session, artist_ids, gen_id):
+    ''' Updates artist relationships for a specific genre
+    according to a list of artist_ids '''
+    genre_name = get.genre_by_id(session, gen_id).name
+    db_artist_objs = get.artists_by_genre(session, gen_id)
+    db_artist_ids = listify(db_artist_objs, 'art_id')
+    for art_id in artist_ids:
+        if art_id not in db_artist_ids:
+            create.artist_genre(session, art_id, genre_name)
+    for art_id in db_artist_ids:
+        if art_id not in artist_ids:
+            delete.artist_genre(session, art_id, gen_id)
+
+def influences(session, children, gen_id):
+    ''' Updates a single genre's influence relationships
+    to reflect a list of genre ids in param:children '''
+    db_children_objs = session.query(Influence).filter_by(
+        parent=gen_id).all()
+    db_children_ids = listify(db_children_objs, 'child')
+    for child in children:
+        if child not in db_children_ids:
+            create.influence(session, gen_id, child)
+    for child in db_children_ids:
+        if child not in children:
+            delete.influence(gen_id, child)

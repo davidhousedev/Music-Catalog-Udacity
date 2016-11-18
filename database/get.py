@@ -36,7 +36,7 @@ def genres_by_artist(session, artist_id):
 
 
 def artists(session, limit=None):
-    artists = session.query(Artist).order_by(desc(Artist.created)).limit(limit)
+    artists = session.query(Artist).order_by(desc(Artist.created)).limit(limit).all()
     return artists
 
 

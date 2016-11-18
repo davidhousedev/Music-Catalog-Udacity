@@ -6,7 +6,7 @@ from flask import Flask, url_for, render_template, request
 from flask import redirect, flash, jsonify
 
 import database_controller as db
-from database.database_helpers import url_name
+from database.database_helpers import url_name, listify
 
 # # Initializes python shell to interface with database
 # from sqlalchemy import create_engine
@@ -85,8 +85,9 @@ def artist_edit(artist):
         return redirect(url_for('artist', artist=artist['art_id']))
     # Prevent any artist genres from being printed as unchecked in view
     db_genres = db.db_get_all_genres()
-    for artist_genre in artist['genres']:
-        db_genres.remove(artist_genre)
+    for genre in db_genres:
+        if genre.name in artist['genres']:
+            db_genres.remove(genre)
     return render_template('artist_edit.html',
                            artist=artist,
                            db_genres=db_genres)
@@ -136,28 +137,38 @@ def genre_create():
                            genres=genres)
 
 
-@app.route('/genre/edit/<int:genre>/')
-@app.route('/genre/edit/<genre>/')
+@app.route('/genre/edit/<int:genre>/',
+           methods=['GET', 'POST'])
+@app.route('/genre/edit/<genre>/',
+           methods=['GET', 'POST'])
 def genre_edit(genre):
     """ Edit a specific genre """
-    radiohead = dict(name='Radiohead',
-                     art_id=1,
-                     url_name='radiohead',
-                     emergence='1990',
-                     genres=['Rock', 'Alternative'],
-                     top_songs=['No Surprises', 'Reckoner', 'Fake Plastic Trees'])
-    seratones = dict(name='Seratones',
-                     art_id=2,
-                     url_name='seratones',
-                     emergence='2016',
-                     genres=['Rock', 'Indie'],
-                     top_songs=['Don\'t Need It', 'Necromancer', 'Chandelier'])
-    genre = dict(name='Alternative',
-                 artists=[2])
-    artists = [radiohead, seratones]
+    genre, gen_artists, gen_influences = db.db_get_genre(genre)
+    if request.method == 'POST':
+        form_data = parse_genre_form_data(request.form)
+        db.db_edit_genre(form_data['name'],
+                         form_data['artists'],
+                         form_data['influences'],
+                         genre.gen_id)
+        return redirect(url_for('genre', genre=genre.gen_id))
+    db_artists = db.db_get_all_artists()
+    if gen_artists:
+        gen_artist_names = listify(gen_artists, 'name')
+        for db_artist in db_artists:
+            if db_artist.name in gen_artist_names:
+                db_artists.remove(db_artist)
+    db_genres = db.db_get_all_genres()
+    if gen_influences:
+        gen_influence_names = listify(gen_influences, 'name')
+        for db_genre in db_genres:
+            if db_genre.name in gen_influence_names:
+                db_genres.remove(genre.name)
     return render_template('genre_edit.html',
-                           artists=artists,
-                           genre=genre)
+                           genre=genre,
+                           gen_artists=gen_artists,
+                           gen_influences=gen_influences,
+                           db_artists=db_artists,
+                           db_genres=db_genres)
 
 
 @app.route('/genre/delete/<int:genre>/')

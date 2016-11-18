@@ -8,16 +8,34 @@
 {% block content %}
     <form method="POST">
         <label for="name">Name</label>
-        <input type="text" name="name" placeholder="{{genre.name}}" id="name"/>
+        <input type="text" name="name" value="{{genre.name}}" id="name"/>
         <br>
-        <label>Genres
-            {% for artist in artists %}
+        <label>Artists
+            {% for artist in gen_artists %}
                 <br>
                 <label for="{{artist.name}}">{{artist.name}}</label>
-                <input type="checkbox" name="{{artist.name}}" id="{{artist.name}}" {% if artist.art_id in genre.artists %}checked{% endif %}/>
+                <input type="checkbox" name="artist-{{artist.art_id}}" id="{{artist.name}}" checked />
+            {% endfor %}
+            {% for artist in db_artists %}
+                <br>
+                <label for="{{artist.name}}">{{artist.name}}</label>
+                <input type="checkbox" name="artist-{{artist.art_id}}" id="{{artist.name}}" />
             {% endfor %}
         </label>
         <br>
-        <button>Edit</button>
+        <label>Genres
+            {% for genre in gen_influences %}
+                <br>
+                <label for="{{genre.name}}">{{genre.name}}</label>
+                <input type="checkbox" name="genre-{{genre.gen_id}}" id="{{genre.name}}" checked />
+            {% endfor %}
+            {% for genre in db_genres %}
+                <br>
+                <label for="{{genre.name}}">{{genre.name}}</label>
+                <input type="checkbox" name="genre-{{genre.gen_id}}" id="{{genre.name}}" />
+            {% endfor %}
+        </label>
+        <br>
+        <button>Save Changes</button>
     </form>
 {% endblock %}
