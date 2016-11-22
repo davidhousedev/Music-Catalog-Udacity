@@ -17,6 +17,23 @@ from sqlalchemy import create_engine
 Base = declarative_base()
 
 
+class User(Base):
+    """ Database table for a user
+
+    Columns:
+        * (REQ) name: Str, user's full name
+        * (REQ) email: Str, user's email address
+        * (REQ) picture: Str, URL for user's picture
+        * (PRIMARY) user_id: Int, database ID for user
+    """
+    __tablename__ = 'user'
+
+    name = Column(String(100), nullable=False)
+    email = Column(String(100), nullable=False)
+    picture = Column(String(500), nullable=False)
+    user_id = Column(Integer, primary_key=True)
+
+
 class Genre(Base):
 
     """ Database table for music genres

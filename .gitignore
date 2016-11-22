@@ -2,3 +2,4 @@
 *.db
 api_keys.py
 *.txt
+client_secrets.json
