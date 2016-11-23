@@ -251,6 +251,8 @@ def authenticate_user():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+
+    # If user is not already in database, create account for that e-mail
     db_user = db.db_get_user(login_session['email'])
     if not db_user:
         db_user = db.db_create_user(login_session)
@@ -278,6 +280,7 @@ def disconnect_user():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
+        del login_session['user_id']
     else:
         response = make_response(json.dumps("Failed to disconnect user"), 400)
         response.headers['Content-Type'] = 'application/json'

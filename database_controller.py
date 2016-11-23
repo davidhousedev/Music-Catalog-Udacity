@@ -107,7 +107,8 @@ def db_get_artist(artist):
         print 'artist url name is %s' % db_artist.url_name
         artist = dict(name=db_artist.name,
                       url_name=db_artist.url_name,
-                      art_id=db_artist.art_id)
+                      art_id=db_artist.art_id,
+                      user=db_artist.user)
         if artist:
             genre_objs = get.genres_by_artist(session, artist['art_id'])
             artist['genres'] = listify(genre_objs, 'name')
