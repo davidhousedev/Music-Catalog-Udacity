@@ -16,7 +16,7 @@ from database.database_helpers import api_spotify_artist, url_name
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Artist, ArtistGenre, Genre
-from database_setup import Influence, TopSongs
+from database_setup import Influence, TopSongs, User
 
 from database.database_helpers import TOP_SONG_LIMIT
 
@@ -28,7 +28,39 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 
 
-def db_add_artist(spotify_id):
+def db_create_user(login_session):
+    ''' Creates a user in the database based on information
+    stored in a user login session. Returns new user object '''
+    session = DBSession()
+    try:
+        new_user = create.user(session,
+                               login_session['username'],
+                               login_session['email'],
+                               login_session['picture'])
+        return new_user
+    except Exception, e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+
+def db_get_user(user):
+    ''' Returns a user object either by email address or by user_id '''
+    session = DBSession()
+    try:
+        if user is int:
+            return get.user_by_id(session, user)
+        else:
+            return get.user_by_email(session, user)
+    except Exception, e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+
+def db_add_artist(spotify_id, login_session):
     """ Queries Spotify by artist id for artist info and top tracks
     then adds artist to appropriate database tables
     Returns tuple ('add', artist_name) if successful """
@@ -38,11 +70,12 @@ def db_add_artist(spotify_id):
         artist_name, artist_genres = api_spotify_artist(spotify_id)
         # Add artist record to database
         print artist_name, spotify_id
-        create.artist(session, artist_name, spotify_id)
+        pprint.pprint(login_session)
+        create.artist(session, artist_name, spotify_id, login_session['user_id'])
         # Retrieve new artist from DB, to use artist art_id
         artist_id = get.artist_by_spotify_id(session, spotify_id).art_id
         # Add any new genres to database
-        create.genres(session, artist_genres)
+        create.genres(session, artist_genres, login_session['user_id'])
         # Add artist genres to database
         create.artist_genres(session, artist_id, artist_genres)
         # # Add artist top songs to database
@@ -181,10 +214,10 @@ def db_get_all_genres():
     return genres
 
 
-def db_create_genre(name, artists, influences):
+def db_create_genre(name, artists, influences, login_session):
     session = DBSession()
     try:
-        new_genre = create.genre(session, name)
+        new_genre = create.genre(session, name, login_session['user_id'])
         for artist_id in artists:
             create.artist_genre(session, artist_id, name)
         new_genre_id = get.genre_by_url_name(session, new_genre).gen_id

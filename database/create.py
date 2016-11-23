@@ -1,15 +1,21 @@
 import datetime
 
 from database_setup import Base, Artist, ArtistGenre, Genre
-from database_setup import Influence, TopSongs
+from database_setup import Influence, TopSongs, User
 
 import database.get as get
 from database.database_helpers import listify, api_spotify_top_tracks
 from database.database_helpers import get_youtube_ids, TOP_SONG_LIMIT
 from database.database_helpers import url_name
 
+def user(session, name, email, picture_url):
+    ''' Creates a new row in the User table '''
+    user = User(name=name, email=email, picture=picture_url)
+    session.add(user)
+    return session.query(User).filter_by(email=email).one()
 
-def artist(session, name, spotify_id):
+
+def artist(session, name, spotify_id, user_id):
     ''' When passed an artist name and spotify_id,
     creates an artist record in the database '''
     print 'test'
@@ -18,19 +24,21 @@ def artist(session, name, spotify_id):
     new_artist = Artist(name=name,
                         spotify_id=spotify_id,
                         url_name=url_name(name),
-                        created=datetime.datetime.utcnow())
+                        created=datetime.datetime.utcnow(),
+                        user=int(user_id))
     session.add(new_artist)
 
-def genre(session, name):
+def genre(session, name, user_id):
     ''' Creates a new row in the Genre table '''
     new_genre = Genre(name=name,
                       url_name=url_name(name),
-                      created=datetime.datetime.utcnow())
+                      created=datetime.datetime.utcnow(),
+                      user=user_id)
     session.add(new_genre)
     print 'returning %s' % new_genre.url_name
     return new_genre.url_name
 
-def genres(session, new_genres):
+def genres(session, new_genres, user_id):
     ''' When passed a db session and a list of music genres,
     this function adds all new genres to database '''
     db_genres = get.genres(session)
@@ -38,7 +46,7 @@ def genres(session, new_genres):
     # Add genres that are not currently in database
     for gen_name in new_genres:
         if gen_name not in db_genre_names:
-            genre(session, gen_name)
+            genre(session, gen_name, user_id)
 
 def artist_genre(session, artist_id, genre_name):
     ''' Creates a single artist genre in the database '''

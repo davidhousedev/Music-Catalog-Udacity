@@ -29,10 +29,19 @@ class User(Base):
     __tablename__ = 'user'
 
     name = Column(String(100), nullable=False)
-    email = Column(String(100), nullable=False)
+    email = Column(String(100), nullable=False, unique=True)
     picture = Column(String(500), nullable=False)
     user_id = Column(Integer, primary_key=True)
 
+    @property
+    def serialize(self):
+        # Returns object in easily serializable format
+        return {
+            'name': self.name,
+            'email': self.email,
+            'picture': self.picture,
+            'user_id': self.user_id
+        }
 
 class Genre(Base):
 
@@ -52,6 +61,7 @@ class Genre(Base):
     url_name = Column(String(100), nullable=False, unique=True)
     created = Column(String(100))
     updated = Column(String(100), default=datetime.datetime.utcnow)
+    user = Column(Integer, ForeignKey('user.user_id'), nullable=False)
 
     @property
     def serialize(self):
@@ -109,6 +119,7 @@ class Artist(Base):
     url_name = Column(String(300), nullable=False, unique=True)
     created = Column(String(100), nullable=False)
     updated = Column(String(100), default=datetime.datetime.utcnow)
+    user = Column(Integer, ForeignKey('user.user_id'), nullable=False)
 
     @property
     def serialize(self):

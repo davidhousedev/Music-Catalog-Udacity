@@ -1,6 +1,15 @@
 from sqlalchemy import desc
 from database_setup import Base, Artist, ArtistGenre, Genre
-from database_setup import Influence, TopSongs
+from database_setup import Influence, TopSongs, User
+
+def user_by_email(session, email):
+    ''' Returns a user object corresponding to a provided email address '''
+    return session.query(User).filter_by(email=email).one()
+
+
+def user_by_id(session, user_id):
+    ''' Returns a user object corresponding to a provided user_id '''
+    return session.query(User).filter_by(user_id=int(user_id)).one()
 
 
 def genres(session):
@@ -13,10 +22,12 @@ def genre_by_name(session, name):
     genre_name = name.lower()
     return session.query(Genre).filter_by(name=genre_name).one()
 
+
 def genre_by_url_name(session, url_name):
     ''' Searches database for a specific genre, by genre.url_name.
     Returns a genre object corresponding to the name '''
     return session.query(Genre).filter_by(url_name=url_name).one()
+
 
 def genre_by_id(session, id):
     ''' Searches database for a specific genre, by gen_id.
@@ -36,7 +47,8 @@ def genres_by_artist(session, artist_id):
 
 
 def artists(session, limit=None):
-    artists = session.query(Artist).order_by(desc(Artist.created)).limit(limit).all()
+    artists = session.query(Artist).order_by(
+        desc(Artist.created)).limit(limit).all()
     return artists
 
 
@@ -70,7 +82,6 @@ def artists_by_genre(session, genre_id):
     return sorted(artist_objs, key=__index_to_name)
 
 
-
 def top_song(session, artist_id, rank):
     print 'looking up: artist-%s, rank-%s' % (artist_id, rank)
     return session.query(TopSongs).filter_by(artist=artist_id, rank=rank).one()
@@ -82,17 +93,20 @@ def top_songs_by_artist(session, artist_id):
     return session.query(TopSongs).filter_by(
         artist=artist_id).order_by(TopSongs.rank).all()
 
+
 def artist_genres_by_artist(session, artist_id):
     ''' Retrieves all ArtistGenre rows corresponding
     to a specific artist '''
     return session.query(ArtistGenre).filter_by(
         artist=artist_id).all()
 
+
 def artist_genres_by_genre(session, genre_id):
     ''' Retrieves all ArtistGenre rows corresponding
     to a specific genre '''
     return session.query(ArtistGenre).filter_by(
         genre=genre_id).all()
+
 
 def influences_by_genre_id(session, genre_id):
     ''' Returns a list of genre objects that are all influenced
@@ -105,6 +119,7 @@ def influences_by_genre_id(session, genre_id):
     return sorted(genres, key=__index_to_name)
 
 # Helpers
+
 
 def __index_to_name(db_obj):
     ''' Returns the name attribute of a database object

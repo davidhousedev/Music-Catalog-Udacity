@@ -11,7 +11,8 @@ from helpers.http_helpers import parse_url, parse_edit_form_data
 from helpers.http_helpers import parse_genre_form_data
 
 from flask import Flask, url_for, render_template, request
-from flask import redirect, flash, jsonify, session, make_response
+from flask import redirect, flash, jsonify, make_response
+from flask import session as login_session
 
 import database_controller as db
 from database.database_helpers import url_name, listify
@@ -32,10 +33,13 @@ MAX_RECENT_ADDITIONS = 5
 def catalog():
     """ Displays HTML tempplate for catalog homepage """
     genres = db.db_get_all_genres()
+    for genre in genres:
+        print genre
     recent_items = db.db_get_recent_additions(MAX_RECENT_ADDITIONS)
     return render_template('catalog.html',
-                           genes=genres,
-                           recent_items=recent_items)
+                           genres=genres,
+                           recent_items=recent_items,
+                           user=login_session)
 
 
 # Artist CRUD Routes
@@ -45,7 +49,7 @@ def catalog():
 def artist(artist):
     """ Displays artist page by artist database id """
     artist = db.db_get_artist(parse_url(artist))
-    return render_template('artist.html', artist=artist)
+    return render_template('artist.html', artist=artist, user=login_session)
 
 
 @app.route('/artist/create/',
@@ -57,7 +61,7 @@ def artist_create():
         for item in form_data:
             spotify_id = item
             break
-        message = db.db_add_artist(spotify_id)
+        message = db.db_add_artist(spotify_id, login_session)
         if message[0] == 'add':
             artist = db.db_get_artist(message[1])
 
@@ -66,7 +70,7 @@ def artist_create():
                    artist_url=url_for('artist', artist=artist['url_name']))
         return json.dumps(obj)
     else:
-        return render_template('artist_create.html')
+        return render_template('artist_create.html', user=login_session)
 
 
 @app.route('/artist/edit/<int:artist>/',
@@ -88,7 +92,8 @@ def artist_edit(artist):
             db_genres.remove(genre)
     return render_template('artist_edit.html',
                            artist=artist,
-                           db_genres=db_genres)
+                           db_genres=db_genres,
+                           user=login_session)
 
 
 @app.route('/artist/delete/<int:artist>/',
@@ -101,7 +106,7 @@ def artist_delete(artist):
     if request.method == 'POST':
         db.db_delete_artist(artist['art_id'])
         return redirect(url_for('catalog'))
-    return render_template('artist_delete.html', artist=artist)
+    return render_template('artist_delete.html', artist=artist, user=login_session)
 
 
 # Genre CRUD routes
@@ -114,7 +119,8 @@ def genre(genre):
     return render_template('genre.html',
                            genre=genre,
                            artists=artists,
-                           influences=influences)
+                           influences=influences,
+                           user=login_session)
 
 
 @app.route('/genre/create/',
@@ -127,12 +133,14 @@ def genre_create():
         form_data = parse_genre_form_data(request.form)
         genre_name = db.db_create_genre(form_data['name'],
                                         form_data['artists'],
-                                        form_data['influences'])[1]
+                                        form_data['influences'],
+                                        login_session)[1]
         return redirect(url_for('genre', genre=genre_name))
 
     return render_template('genre_create.html',
                            artists=artists,
-                           genres=genres)
+                           genres=genres,
+                           user=login_session)
 
 
 @app.route('/genre/edit/<int:genre>/',
@@ -166,7 +174,8 @@ def genre_edit(genre):
                            gen_artists=gen_artists,
                            gen_influences=gen_influences,
                            db_artists=db_artists,
-                           db_genres=db_genres)
+                           db_genres=db_genres,
+                           user=login_session)
 
 
 @app.route('/genre/delete/<int:genre>/',
@@ -179,26 +188,26 @@ def genre_delete(genre):
     if request.method == 'POST':
         db.db_delete_genre(genre.gen_id)
         return redirect(url_for('catalog'))
-    return render_template('genre_delete.html', genre=genre)
+    return render_template('genre_delete.html', genre=genre, user=login_session)
 
 
 @app.route('/login')
 def show_login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for char in xrange(32))
-    session['state'] = state
-    return render_template('loginv2.html', STATE=state)
+    login_session['state'] = state
+    return render_template('loginv2.html', STATE=state, user=login_session)
 
 @app.route('/gconnect',
            methods=['POST'])
 def authenticate_user():
-    # if request.form['state'] != session['state']:
+    # if request.form['state'] != login_session['state']:
     #     response = make_response(json.dumps('Invalid state parameter.'), 401)
     #     response.headers['Content-Type'] = 'application/json'
     #     return response
     # id_token = request.form['token']
     # Validate state token
-    if request.args.get('state') != session['state']:
+    if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -229,16 +238,16 @@ def authenticate_user():
         response = make_response(json.dumps("Token's client ID does not match app's."), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    stored_credentials = session.get('credentials')
-    stored_gplus_id = session.get('gplus_id')
+    stored_credentials = login_session.get('credentials')
+    stored_gplus_id = login_session.get('gplus_id')
     if stored_credentials is not None and gplus_id == stored_gplus_id:
         response = make_response(json.dumps("Current user is already connected."), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    # Store access token in the session
-    session['access_token'] = credentials.access_token
-    session['gplus_id'] = gplus_id
+    # Store access token in the login_session
+    login_session['access_token'] = credentials.access_token
+    login_session['gplus_id'] = gplus_id
 
     # Get user info
     userinfo_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
@@ -247,17 +256,20 @@ def authenticate_user():
 
     data = answer.json()
 
-    session['username'] = data['name']
-    session['picture'] = data['picture']
-    session['email'] = data['email']
+    login_session['username'] = data['name']
+    login_session['picture'] = data['picture']
+    login_session['email'] = data['email']
 
-    flash('You are now logged in as %s' % session['username'])
+    db_user = db.db_create_user(login_session)
+    login_session['user_id'] = db_user.user_id
+
+
     return redirect(url_for('catalog'))
 
 
 @app.route('/gdisconnect')
 def disconnect_user():
-    access_token = session.get('access_token')
+    access_token = login_session.get('access_token')
     if access_token is None:
         response = make_response(json.dumps("Current user not connected."), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -267,12 +279,12 @@ def disconnect_user():
     result = http.request(url, 'GET')[0]
 
     if result['status'] == '200':
-        # Reset user's session
-        del session['access_token']
-        del session['gplus_id']
-        del session['username']
-        del session['email']
-        del session['picture']
+        # Reset user's login_session
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
     else:
         response = make_response(json.dumps("Failed to disconnect user"), 400)
         response.headers['Content-Type'] = 'application/json'
