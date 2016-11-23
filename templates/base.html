@@ -21,13 +21,13 @@
                 <li class="nav-item navbar-text">
                     <a href="{{url_for('genre_create')}}">New Genre</a>
                 </li>
-                {% if user and user['username'] %}
+                {% if cur_user and cur_user['username'] %}
                     <span class="navbar-text float-xs-right text-muted">
-                        {{user['username']}} <a href="/gdisconnect">Log Out</a>
+                        {{cur_user['username']}} <a href="/gdisconnect">Log Out</a>
                     </span>
 
                 {% else %}
-                    <a href="/login" class="btn">Log In</a>
+                    <a class="navbar-text float-xs-right" href="/login" class="btn">Log In</a>
                 {% endif %}
             </ul>
         </nav>

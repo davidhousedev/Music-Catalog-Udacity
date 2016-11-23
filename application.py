@@ -33,13 +33,11 @@ MAX_RECENT_ADDITIONS = 5
 def catalog():
     """ Displays HTML tempplate for catalog homepage """
     genres = db.db_get_all_genres()
-    for genre in genres:
-        print genre
     recent_items = db.db_get_recent_additions(MAX_RECENT_ADDITIONS)
     return render_template('catalog.html',
                            genres=genres,
                            recent_items=recent_items,
-                           user=login_session)
+                           cur_user=login_session)
 
 
 # Artist CRUD Routes
@@ -49,7 +47,7 @@ def catalog():
 def artist(artist):
     """ Displays artist page by artist database id """
     artist = db.db_get_artist(parse_url(artist))
-    return render_template('artist.html', artist=artist, user=login_session)
+    return render_template('artist.html', artist=artist, cur_user=login_session)
 
 
 @app.route('/artist/create/',
@@ -70,7 +68,7 @@ def artist_create():
                    artist_url=url_for('artist', artist=artist['url_name']))
         return json.dumps(obj)
     else:
-        return render_template('artist_create.html', user=login_session)
+        return render_template('artist_create.html', cur_user=login_session)
 
 
 @app.route('/artist/edit/<int:artist>/',
@@ -93,7 +91,7 @@ def artist_edit(artist):
     return render_template('artist_edit.html',
                            artist=artist,
                            db_genres=db_genres,
-                           user=login_session)
+                           cur_user=login_session)
 
 
 @app.route('/artist/delete/<int:artist>/',
@@ -106,7 +104,7 @@ def artist_delete(artist):
     if request.method == 'POST':
         db.db_delete_artist(artist['art_id'])
         return redirect(url_for('catalog'))
-    return render_template('artist_delete.html', artist=artist, user=login_session)
+    return render_template('artist_delete.html', artist=artist, cur_user=login_session)
 
 
 # Genre CRUD routes
@@ -120,7 +118,7 @@ def genre(genre):
                            genre=genre,
                            artists=artists,
                            influences=influences,
-                           user=login_session)
+                           cur_user=login_session)
 
 
 @app.route('/genre/create/',
@@ -140,7 +138,7 @@ def genre_create():
     return render_template('genre_create.html',
                            artists=artists,
                            genres=genres,
-                           user=login_session)
+                           cur_user=login_session)
 
 
 @app.route('/genre/edit/<int:genre>/',
@@ -175,7 +173,7 @@ def genre_edit(genre):
                            gen_influences=gen_influences,
                            db_artists=db_artists,
                            db_genres=db_genres,
-                           user=login_session)
+                           cur_user=login_session)
 
 
 @app.route('/genre/delete/<int:genre>/',
@@ -188,7 +186,7 @@ def genre_delete(genre):
     if request.method == 'POST':
         db.db_delete_genre(genre.gen_id)
         return redirect(url_for('catalog'))
-    return render_template('genre_delete.html', genre=genre, user=login_session)
+    return render_template('genre_delete.html', genre=genre, cur_user=login_session)
 
 
 @app.route('/login')
@@ -196,17 +194,11 @@ def show_login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for char in xrange(32))
     login_session['state'] = state
-    return render_template('loginv2.html', STATE=state, user=login_session)
+    return render_template('loginv2.html', STATE=state, cur_user=login_session)
 
 @app.route('/gconnect',
            methods=['POST'])
 def authenticate_user():
-    # if request.form['state'] != login_session['state']:
-    #     response = make_response(json.dumps('Invalid state parameter.'), 401)
-    #     response.headers['Content-Type'] = 'application/json'
-    #     return response
-    # id_token = request.form['token']
-    # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -259,8 +251,9 @@ def authenticate_user():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
-
-    db_user = db.db_create_user(login_session)
+    db_user = db.db_get_user(login_session['email'])
+    if not db_user:
+        db_user = db.db_create_user(login_session)
     login_session['user_id'] = db_user.user_id
 
 

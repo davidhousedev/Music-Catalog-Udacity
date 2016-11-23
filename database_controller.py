@@ -53,9 +53,8 @@ def db_get_user(user):
             return get.user_by_id(session, user)
         else:
             return get.user_by_email(session, user)
-    except Exception, e:
-        session.rollback()
-        raise e
+    except:
+        return None
     finally:
         session.close()
 
