@@ -7,6 +7,10 @@
 
 {% block content %}
     <h1>{{genre.name}}</h1>
+    {% if cur_user and cur_user['user_id'] == genre.user %}
+        <a href="{{url_for('genre_edit', genre=genre.url_name)}}">Edit</a>
+        <a href="{{url_for('genre_delete', genre=genre.url_name)}}">Delete</a>
+    {% endif %}
     {% for artist in artists %}
         <p>{{artist.name}}</p>
     {% endfor %}
