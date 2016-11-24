@@ -6,8 +6,116 @@
 
     <script src="//apis.google.com/js/platform.js?onload=start"> </script>
 
+        <script>
+        function signInCallback(authResult) {
+            if (authResult['code']) {
+                // Hide the sign-in button now that the user is authorized
+                $('#signinButton').attr('style', 'display: none');
+                // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+                $.ajax({
+                    type: 'POST',
+                    url: '/gconnect?state={{STATE}}',
+                    processData: false,
+                    data: authResult['code'],
+                    contentType: 'application/octet-stream; charset=utf-8',
+                    success: function(result) {
+                        // Handle or verify the server response if necessary.
+                        if (result) {
+                            window.location.href = "/catalog";
+                        } else if (authResult['error']) {
+                            console.log('There was an error: ' + authResult['error']);
+                        } else {
+                            $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                        }
+                    }
+                });
+            }
+        }
+        </script>
+
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '177969199334806',
+          xfbml      : true,
+          version    : 'v2.6'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+
+        function checkLoginState() {
+          FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+          });
+        }
+
+      function statusChangeCallback(response) {
+        console.log('statusChangeCallback');
+        console.log(response);
+        // The response object is returned with a status field that lets the
+        // app know the current login status of the person.
+        // Full docs on the response object can be found in the documentation
+        // for FB.getLoginStatus().
+        if (response.status === 'connected') {
+            // Logged into your app and Facebook.
+            authResult = {
+                'name': null,
+                'email': null,
+                'picture': null,
+            };
+            FB.api('/me', {fields: ['email', 'name']}, function(response) {
+                authResult['name'] = response['name'];
+                authResult['email'] = response['email'];
+                FB.api('/me/picture', function(response){
+                    authResult['picture'] = response['data']['url'];
+                    authResult = JSON.stringify(authResult)
+                    $.ajax({
+                        type: 'POST',
+                        url: '/fbconnect?state={{STATE}}',
+                        processData: false,
+                        data: authResult,
+                        contentType: 'json',
+                        success: function(result) {
+                            // Handle or verify the server response if necessary.
+                            if (result) {
+                                window.location.href = "/catalog";
+                            } else if (authResult['error']) {
+                                console.log('There was an error: ' + authResult['error']);
+                            } else {
+                                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                            }
+                        }
+                    });
+                });
+            });
+
+
+
+        } else if (response.status === 'not_authorized') {
+          // The person is logged into Facebook, but not your app.
+          document.getElementById('status').innerHTML = 'Please log ' +
+            'into this app.';
+        } else {
+          // The person is not logged into Facebook, so we're not sure if
+          // they are logged into this app or not.
+          document.getElementById('status').innerHTML = 'Please log ' +
+            'into Facebook.';
+        }
+      }
+
+    </script>
+
 {% endblock %}
 {% block content %}
+
         <div id="signInButton">
           <span class="g-signin"
             data-scope="openid email"
@@ -20,32 +128,13 @@
           </span>
         </div>
 
+        <fb:login-button
+          scope="public_profile,email"
+          onlogin="checkLoginState();">
+        </fb:login-button>
+
         <div id="result"></div>
+        <div id="status"></div>
 
-        <script>
-        function signInCallback(authResult) {
-          if (authResult['code']) {
-            // Hide the sign-in button now that the user is authorized
-            $('#signinButton').attr('style', 'display: none');
-            // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
-            $.ajax({
-              type: 'POST',
-              url: '/gconnect?state={{STATE}}',
-              processData: false,
-              data: authResult['code'],
-              contentType: 'application/octet-stream; charset=utf-8',
-              success: function(result) {
-                // Handle or verify the server response if necessary.
-                if (result) {
-                  window.location.href = "/catalog";
 
-              } else if (authResult['error']) {
-            console.log('There was an error: ' + authResult['error']);
-          } else {
-                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-                 }
-              }
-
-          }); } }
-        </script>
 {% endblock %}

@@ -55,9 +55,7 @@ def artist(artist):
 def artist_create():
     """ Renders and processess form for creating artists """
     # Verify that the current user has permission to perform this action
-    try:
-        assert login_session['user_id']
-    except:
+    if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
 
@@ -87,9 +85,7 @@ def artist_edit(artist):
     artist = db.db_get_artist(parse_url(artist))
 
     # Verify that the current user has permission to perform this action
-    try:
-        assert login_session['user_id']
-    except:
+    if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
     if login_session['user_id'] != artist['user']:
@@ -121,9 +117,7 @@ def artist_delete(artist):
     artist = db.db_get_artist(artist)
 
     # Verify that the current user has permission to perform this action
-    try:
-        assert login_session['user_id']
-    except:
+    if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
     if login_session['user_id'] != artist['user']:
@@ -155,9 +149,7 @@ def genre(genre):
 def genre_create():
     """ Create a new genre in the database """
     # Verify that the current user has permission to perform this action
-    try:
-        assert login_session['user_id']
-    except:
+    if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
 
@@ -186,9 +178,7 @@ def genre_edit(genre):
     genre, gen_artists, gen_influences = db.db_get_genre(parse_url(genre))
 
     # Verify that the current user has permission to perform this action
-    try:
-        assert login_session['user_id']
-    except:
+    if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
     if login_session['user_id'] != genre.user:
@@ -232,9 +222,7 @@ def genre_delete(genre):
     genre = db.db_get_genre(parse_url(genre))[0]
 
     # Verify that the current user has permission to perform this action
-    try:
-        assert login_session['user_id']
-    except:
+    if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
     if login_session['user_id'] != genre.user:
@@ -255,8 +243,31 @@ def show_login():
     return render_template('loginv2.html', STATE=state, cur_user=login_session)
 
 
-@app.route('/gconnect',
-           methods=['POST'])
+@app.route('/fbconnect', methods=['POST'])
+def fbconnect():
+    # Ensure that user is logging in from the login screen
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    data = json.loads(request.data)
+    pprint.pprint(data)
+
+    login_session['username'] = data['name']
+    login_session['picture'] = data['picture']
+    login_session['email'] = data['email']
+
+    # If user is not already in database, create account for that e-mail
+    db_user = db.db_get_user(login_session['email'])
+    if not db_user:
+        db_user = db.db_create_user(login_session)
+    login_session['user_id'] = db_user.user_id
+
+    return redirect(url_for('catalog'))
+
+
+
+@app.route('/gconnect', methods=['POST'])
 def authenticate_user():
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
