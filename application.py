@@ -40,7 +40,11 @@ def catalog():
                            cur_user=login_session)
 
 
+
+
+#
 # Artist CRUD Routes
+#
 
 @app.route('/artist/<int:artist>/')
 @app.route('/artist/<artist>/')
@@ -130,7 +134,11 @@ def artist_delete(artist):
     return render_template('artist_delete.html', artist=artist, cur_user=login_session)
 
 
+
+
+#
 # Genre CRUD routes
+#
 
 @app.route('/genre/<int:genre>/')
 @app.route('/genre/<genre>/')
@@ -234,6 +242,12 @@ def genre_delete(genre):
         return redirect(url_for('catalog'))
     return render_template('genre_delete.html', genre=genre, cur_user=login_session)
 
+
+
+
+#
+# Authentication
+#
 
 @app.route('/login')
 def show_login():
@@ -425,6 +439,21 @@ def gdisconnect():
         return True
     else:
         return False
+
+
+
+
+#
+# API Endpoints
+#
+
+#TODO: All artists with limit
+#TODO: All genres
+#TODO: Single Genre: all influences and artists
+#TODO: Single artist: all genres and top songs
+#TODO: User: all artists and genres
+
+
 
 
 if __name__ == '__main__':
