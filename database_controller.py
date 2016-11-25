@@ -37,6 +37,7 @@ def db_create_user(login_session):
                                login_session['username'],
                                login_session['email'],
                                login_session['picture'])
+        session.commit()
         return new_user
     except Exception, e:
         session.rollback()
