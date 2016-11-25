@@ -71,7 +71,8 @@ def db_add_artist(spotify_id, login_session):
         # Add artist record to database
         print artist_name, spotify_id
         pprint.pprint(login_session)
-        create.artist(session, artist_name, spotify_id, login_session['user_id'])
+        create.artist(
+            session, artist_name, spotify_id, login_session['user_id'])
         # Retrieve new artist from DB, to use artist art_id
         artist_id = get.artist_by_spotify_id(session, spotify_id).art_id
         # Add any new genres to database
@@ -124,6 +125,7 @@ def db_get_artist(artist):
 
     return artist
 
+
 def db_get_all_artists():
     ''' Returns a list of artist objects containing all artists
     in the database '''
@@ -137,6 +139,18 @@ def db_get_all_artists():
     return artists
 
 
+def db_get_artists_by_user(user_id):
+    ''' Returns a list of artist objects created by a specific user '''
+    session = DBSession()
+    try:
+        artists = get.artists_by_user_id(session, user_id)
+        return artists
+    except Exception, e:
+        raise e
+    finally:
+        session.close()
+
+
 def db_update_artist(form_data, artist_id):
     ''' Updates database entry for an artist, genres, and top_songs
     based on information supplied by user form data '''
@@ -147,8 +161,8 @@ def db_update_artist(form_data, artist_id):
                       form_data['name'],
                       artist_id)
         update.artist_genres(session,
-                      form_data['genres'],
-                      artist_id)
+                             form_data['genres'],
+                             artist_id)
         update.artist_top_songs(session,
                                 form_data['top_songs'],
                                 artist_id)
@@ -160,6 +174,7 @@ def db_update_artist(form_data, artist_id):
         session.close()
 
     return ('update', artist_id)
+
 
 def db_delete_artist(artist_id):
     ''' Deletes an artist, and its related genre and
@@ -213,6 +228,18 @@ def db_get_all_genres():
         session.close()
 
     return genres
+
+
+def db_get_genres_by_user(user_id):
+    ''' Returns a list of genre objects created by a specific user id '''
+    session = DBSession()
+    try:
+        genres = get.genres_by_user(session, user_id)
+        return genres
+    except Exception, e:
+        raise e
+    finally:
+        session.close()
 
 
 def db_create_genre(name, artists, influences, login_session):

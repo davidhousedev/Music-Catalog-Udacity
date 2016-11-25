@@ -21,10 +21,17 @@
                 <li class="nav-item navbar-text">
                     <a href="{{url_for('genre_create')}}">New Genre</a>
                 </li>
-                {% if cur_user and cur_user['username'] %}
-                    <span class="navbar-text float-xs-right text-muted">
-                        {{cur_user['username']}} <a href="/disconnect">Log Out</a>
+                {% if 'username' in session %}
+                    <span class="nav-item navbar-text float-xs-right text-muted">
+                        <a href="{{url_for('disconnect_user')}}">Log Out</a>
                     </span>
+                    <span class="nav-item navbar-text float-xs-right text-muted">
+                        <a href="{{url_for('user', user=session['user_id'])}}">Profile</a>
+                    </span>
+                    <span class="nav-item navbar-text float-xs-right text-muted">
+                        {{session['username']}}
+                    </span>
+
 
                 {% else %}
                     <a class="navbar-text float-xs-right" href="/login" class="btn">Log In</a>

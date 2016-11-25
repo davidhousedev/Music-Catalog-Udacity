@@ -46,9 +46,23 @@ def genres_by_artist(session, artist_id):
     return genres
 
 
+def genres_by_user(session, user_id):
+    ''' Returns a list of genres created by a specific user '''
+    genres = session.query(Genre).filter_by(user=user_id).order_by(
+        Genre.name).all()
+    return genres
+
+
 def artists(session, limit=None):
     artists = session.query(Artist).order_by(
         desc(Artist.created)).limit(limit).all()
+    return artists
+
+
+def artists_by_user_id(session, user_id):
+    ''' Returns a list of artists created by a specific user '''
+    artists = session.query(Artist).filter_by(user=user_id).order_by(
+        desc(Artist.created)).all()
     return artists
 
 

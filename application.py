@@ -43,6 +43,26 @@ def catalog():
 
 
 #
+# User Views
+#
+
+@app.route('/user/<int:user>/')
+def user(user):
+    """ Displays all genres and artists created by a specific user """
+    user_id = int(user)
+    user = db.db_get_user(user_id)
+    artists = db.db_get_artists_by_user(user_id)
+    genres = db.db_get_genres_by_user(user_id)
+    return render_template('user.html',
+                           user=user,
+                           artists=artists,
+                           genres=genres,
+                           cur_user=login_session)
+
+
+
+
+#
 # Artist CRUD Routes
 #
 
