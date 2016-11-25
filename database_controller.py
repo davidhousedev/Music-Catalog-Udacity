@@ -25,7 +25,7 @@ engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
 # Establish database connection session
-DBSession = sessionmaker(bind=engine)
+DBSession = sessionmaker(bind=engine, expire_on_commit=False)
 
 
 def db_create_user(login_session):
