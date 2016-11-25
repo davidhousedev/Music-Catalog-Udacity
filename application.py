@@ -250,21 +250,55 @@ def fbconnect():
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    data = json.loads(request.data)
-    pprint.pprint(data)
+    # Retrieve access token
+    access_token = request.data
+
+    app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
+        'web']['app_id']
+    app_secret = json.loads(
+        open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
+        app_id, app_secret, access_token)
+    http = httplib2.Http()
+    result = http.request(url, 'GET')[1]
+
+    # Use token to get user info from API
+    userinfo_url = "https://graph.facebook.com/v2.4/me"
+    # strip expire tag from access token
+    token = result.split("&")[0]
+
+    url = 'https://graph.facebook.com/v2.4/me?%s&fields=name,id,email' % token
+    http = httplib2.Http()
+    result = http.request(url, 'GET')[1]
+    data = json.loads(result)
+
 
     login_session['username'] = data['name']
-    login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+    login_session['fb_id'] = data['id']
+    login_session['provider'] = 'facebook'
+
+    # The token must be stored in the login_session in order to properly logout
+    stored_token = token.split("=")[1]
+    login_session['access_token'] = stored_token
+
+    # Get user picture
+    url = 'https://graph.facebook.com/v2.4/me/picture?%s&redirect=0&height=200&width=200' % token
+    http = httplib2.Http()
+    result = http.request(url, 'GET')[1]
+    data = json.loads(result)
+
+    login_session['picture'] = data['data']['url']
 
     # If user is not already in database, create account for that e-mail
     db_user = db.db_get_user(login_session['email'])
     if not db_user:
         db_user = db.db_create_user(login_session)
+    print 'logging in with user ID %s, %s' % (db_user.user_id, db_user.email)
     login_session['user_id'] = db_user.user_id
 
     return redirect(url_for('catalog'))
-
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -326,32 +360,39 @@ def authenticate_user():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+    login_session['provider'] = 'google'
 
     # If user is not already in database, create account for that e-mail
     db_user = db.db_get_user(login_session['email'])
     if not db_user:
         db_user = db.db_create_user(login_session)
+    print 'logging in with user ID %s, %s' % (db_user.user_id, db_user.email)
     login_session['user_id'] = db_user.user_id
 
     return redirect(url_for('catalog'))
 
 
-@app.route('/gdisconnect')
+@app.route('/disconnect')
 def disconnect_user():
-    access_token = login_session.get('access_token')
-    if access_token is None:
-        response = make_response(
-            json.dumps("Current user not connected."), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
-    http = httplib2.Http()
-    result = http.request(url, 'GET')[0]
+    if 'provider' in login_session:
+        provider = login_session['provider']
+        if provider == 'google':
+            if gdisconnect():
+                del login_session['gplus_id']
+            else:
+                response = make_response(json.dumps("Failed to disconnect Google user."), 401)
+                response.headers['Content-Type'] = 'application/json'
+                return response
+        if provider == 'facebook':
+            if fbdisconnect():
+                del login_session['fb_id']
+            else:
+                response = make_response(json.dumps("Failed to disconnect Facebook user."), 401)
+                response.headers['Content-Type'] = 'application/json'
+                return response
 
-    if result['status'] == '200':
         # Reset user's login_session
         del login_session['access_token']
-        del login_session['gplus_id']
         del login_session['username']
         del login_session['email']
         del login_session['picture']
@@ -361,6 +402,29 @@ def disconnect_user():
         response.headers['Content-Type'] = 'application/json'
         return response
     return redirect(url_for('catalog'))
+
+def fbdisconnect():
+    facebook_id = login_session['fb_id']
+    # The access token must me included to successfully logout
+    access_token = login_session['access_token']
+    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+    http = httplib2.Http()
+    result = http.request(url, 'DELETE')[1]
+    return "you have been logged out"
+
+
+def gdisconnect():
+    access_token = login_session.get('access_token')
+    if access_token is None:
+        return False
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+    http = httplib2.Http()
+    result = http.request(url, 'GET')[0]
+
+    if result['status'] == '200':
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
