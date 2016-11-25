@@ -27,6 +27,11 @@ app = Flask(__name__)
 MAX_RECENT_ADDITIONS = 5
 
 
+
+#
+# Primary Views
+#
+
 @app.route('/')
 @app.route('/index/')
 @app.route('/catalog/')
@@ -38,13 +43,6 @@ def catalog():
                            genres=genres,
                            recent_items=recent_items,
                            cur_user=login_session)
-
-
-
-
-#
-# User Views
-#
 
 @app.route('/user/<int:user>/')
 def user(user):
