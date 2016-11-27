@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% block title %}{{artist['name']}}{% endblock %}
+{% block title %}{{artist.name}}{% endblock %}
 {% block head %}
     {# Page-specific JS and CSS #}
 {% endblock %}
 {% block content %}
-    <h1>{{artist['name']}}</h1>
-    {% if cur_user and cur_user['user_id'] == artist['user'] %}
-        <a href="{{url_for('artist_edit', artist=artist['url_name'])}}">Edit</a>
-        <a href="{{url_for('artist_delete', artist=artist['url_name'])}}">Delete</a>
+    <h1>{{artist.name}}</h1>
+    {% if cur_user and cur_user['user_id'] == artist.user %}
+        <a href="{{url_for('artist_edit', artist=artist.url_name)}}">Edit</a>
+        <a href="{{url_for('artist_delete', artist=artist.url_name)}}">Delete</a>
     {% endif %}
 
     <h4>Top songs:</h4>
-    {% for song in artist['top_songs'] %}
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/{{song[1]}}" frameborder="0" allowfullscreen></iframe>
+    {% for song in songs %}
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/{{song.youtube_id}}" frameborder="0" allowfullscreen></iframe>
     {% endfor %}
     <h4>Genres:</h4>
-    {% for genre in artist['genres'] %}
-        <p>{{genre}}</p>
+    {% for genre in genres %}
+        <p>{{genre.name}}</p>
     {% endfor %}
 
 {% endblock %}

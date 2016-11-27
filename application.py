@@ -68,8 +68,12 @@ def user(user):
 @app.route('/artist/<artist>/')
 def artist(artist):
     """ Displays artist page by artist database id """
-    artist = db.db_get_artist(parse_url(artist))
-    return render_template('artist.html', artist=artist, cur_user=login_session)
+    artist, genres, songs = db.db_get_artist(parse_url(artist))
+    return render_template('artist.html',
+                           artist=artist,
+                           genres=genres,
+                           songs=songs,
+                           cur_user=login_session)
 
 
 @app.route('/artist/create/',

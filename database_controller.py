@@ -97,8 +97,9 @@ def db_add_artist(spotify_id, login_session):
 
 
 def db_get_artist(artist):
-    ''' Retrieves an artist and related tables from database,
-    and formats it for easy handling and display '''
+    ''' Returns a tuple containing an artist object,
+    a list of associated genre objects,
+    and a list of associated artist top song objects '''
     session = DBSession()
     db_artist = None
     try:
@@ -106,24 +107,16 @@ def db_get_artist(artist):
             db_artist = get.artist_by_database_id(session, artist)
         else:
             db_artist = get.artist_by_url_name(session, artist)
-        print 'artist url name is %s' % db_artist.url_name
-        artist = dict(name=db_artist.name,
-                      url_name=db_artist.url_name,
-                      art_id=db_artist.art_id,
-                      user=db_artist.user)
-        if artist:
-            genre_objs = get.genres_by_artist(session, artist['art_id'])
-            artist['genres'] = listify(genre_objs, 'name')
-            song_objs = get.top_songs_by_artist(session, artist['art_id'])
-            artist['top_songs'] = listify_multi(
-                song_objs, 'name', 'youtube_id')
+
+        genre_objs = get.genres_by_artist(session, db_artist.art_id)
+        song_objs = get.top_songs_by_artist(session, db_artist.art_id)
+        return db_artist, genre_objs, song_objs
 
     except Exception, e:
         raise e
     finally:
         session.close()
 
-    return artist
 
 
 def db_get_all_artists():
