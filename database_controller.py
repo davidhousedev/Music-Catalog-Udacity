@@ -218,7 +218,7 @@ def db_get_genre(genre):
 
 
 def db_get_all_genres():
-    ''' Returns a list containing genre names '''
+    ''' Returns a list of genre objects for all genres '''
     session = DBSession()
     try:
         genres = get.genres(session)

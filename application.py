@@ -465,10 +465,26 @@ def gdisconnect():
 # API Endpoints
 #
 
-#TODO: All artists with limit
+@app.route('/artists/json/')
+def json_artists():
+    artists = db.db_get_all_artists()
+    return jsonify(artists=[artist.serialize for artist in artists])
+
 #TODO: All genres
+@app.route('/genres/json/')
+def json_genres():
+    genres = db.db_get_all_genres()
+    return jsonify(genres=[genre.serialize for genre in genres])
 #TODO: Single Genre: all influences and artists
+@app.route('/genre/<int:genre>/json/')
+@app.route('/genre/<genre>/json/')
+def json_genre(genre):
+    genre, artists, influences = db.db_get_genre(parse_url(genre))
+    return jsonify(genre=genre.serialize,
+                   artists=[artist.serialize for artist in artists],
+                   influences=[inf.serialize for inf in influences])
 #TODO: Single artist: all genres and top songs
+
 #TODO: User: all artists and genres
 
 
