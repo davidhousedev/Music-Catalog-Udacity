@@ -8,7 +8,7 @@ import database.get as get
 import database.create as create
 import database.update as update
 import database.delete as delete
-from database.database_helpers import listify, listify_multi, get_youtube_ids
+from database.database_helpers import get_youtube_ids
 from database.database_helpers import api_spotify_top_tracks, api_youtube_first_result
 from database.database_helpers import api_spotify_artist, url_name
 

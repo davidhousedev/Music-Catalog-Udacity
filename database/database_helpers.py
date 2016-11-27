@@ -7,28 +7,6 @@ from api_keys import GOOGLE_API_KEY
 TOP_SONG_LIMIT = 3
 
 
-def listify(objs, attr):
-    ''' Returns a list of values of a specific database object attribute
-    e.g. all names of database artists '''
-    attr_list = []
-    for obj in objs:
-        attr_list.append(obj.serialize[attr])
-    return attr_list
-
-
-def listify_multi(objs, *attrs):
-    ''' Iterates through database objs and returns a list of tuples
-    with the values resulting from: obj.attr '''
-    attr_list = []
-    for obj in objs:
-        song = []
-        for attr in attrs:
-            song.append(obj.serialize[attr])
-        print song
-        attr_list.append(tuple(song))
-    return attr_list
-
-
 def get_youtube_ids(artist_name, top_song_list):
     ''' Returns a list of video ids corresponding to the param: top_song_list.
     Video ids will be in the same order as the list of top songs '''
