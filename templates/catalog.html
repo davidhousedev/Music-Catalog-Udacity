@@ -9,7 +9,7 @@
         <ul>
             {% for genre in genres %}
                 <li>
-                    <a class="text-capitalize" href="{{url_for('genre', genre=genre.url_name)}}">{{genre.name}}</a>
+                    <a class="text-capitalize" href="{{url_for('genre', genre=genre.url_name)}}">{{genre.name}}  {{genre.num_artists}}</a>
                 </li>
             {% endfor %}
         </ul>

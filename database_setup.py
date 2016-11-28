@@ -69,6 +69,7 @@ class Genre(Base):
     created = Column(String(100))
     updated = Column(String(100), default=datetime.datetime.utcnow)
     user = Column(Integer, ForeignKey('user.user_id'), nullable=False)
+    artists = relationship('ArtistGenre')
 
     @property
     def serialize(self):

@@ -112,6 +112,8 @@ def db_get_artist(artist):
             db_artist = get.artist_by_url_name(session, artist)
 
         genre_objs = get.genres_by_artist(session, db_artist.art_id)
+        for genre in genre_objs:
+            genre.num_artists = len(genre.artists)
         song_objs = get.top_songs_by_artist(session, db_artist.art_id)
         return db_artist, genre_objs, song_objs
 
@@ -203,7 +205,7 @@ def db_get_genre(genre):
             db_genre = get.genre_by_id(session, genre)
         else:
             db_genre = get.genre_by_url_name(session, genre)
-        print 'line 147'
+        db_genre.num_artists = len(genre.artists)
         artists = get.artists_by_genre(session, db_genre.gen_id)
         influences = get.influences_by_genre_id(session, db_genre.gen_id)
     except Exception, e:
@@ -218,6 +220,8 @@ def db_get_all_genres():
     session = DBSession()
     try:
         genres = get.genres(session)
+        for genre in genres:
+            genre.num_artists = len(genre.artists)
     except Exception, e:
         raise e
     finally:
@@ -231,6 +235,8 @@ def db_get_genres_by_user(user_id):
     session = DBSession()
     try:
         genres = get.genres_by_user(session, user_id)
+        for genre in genres:
+            genre.num_artists = len(genre.artists)
         return genres
     except Exception, e:
         raise e

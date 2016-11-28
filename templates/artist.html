@@ -43,7 +43,7 @@
     <div class="col-xs-12 videos">
         <h4>Genres:</h4>
         {% for genre in genres %}
-            <p>{{genre.name}}</p>
+            <p>{{genre.name}} {{genre.num_artists}}</p>
         {% endfor %}
     </div>
 
