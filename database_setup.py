@@ -16,6 +16,13 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 Base = declarative_base()
 
+# Artist image minimum sizes
+ARTIST_IMAGE_WIDTH_LG = 800
+ARTIST_IMAGE_WIDTH_MD = 600
+ARTIST_IMAGE_WIDTH_SM = 150
+ARTIST_IMAGE_WIDTH_XS = 10
+
+
 
 class User(Base):
     """ Database table for a user

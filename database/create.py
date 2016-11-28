@@ -1,7 +1,9 @@
-import datetime
+import datetime, pprint
 
 from database_setup import Base, Artist, ArtistGenre, Genre
 from database_setup import Influence, TopSongs, User
+from database_setup import ARTIST_IMAGE_WIDTH_LG, ARTIST_IMAGE_WIDTH_MD
+from database_setup import ARTIST_IMAGE_WIDTH_SM
 
 import database.get as get
 from database.database_helpers import listify, api_spotify_top_tracks
@@ -15,10 +17,9 @@ def user(session, name, email, picture_url):
     return session.query(User).filter_by(email=email).one()
 
 
-def artist(session, name, spotify_id, user_id):
+def artist(session, name, spotify_id, images, user_id):
     ''' When passed an artist name and spotify_id,
     creates an artist record in the database '''
-    print 'test'
     encoded_name = url_name(name)
     print encoded_name
     new_artist = Artist(name=name,
@@ -26,6 +27,20 @@ def artist(session, name, spotify_id, user_id):
                         url_name=url_name(name),
                         created=datetime.datetime.utcnow(),
                         user=int(user_id))
+    if images:
+        for image in images:
+            if image[u'width'] > ARTIST_IMAGE_WIDTH_LG:
+                print 'ADDING A LARGE IMAGE TO ARTIST'
+                new_artist.img_url_lg = image[u'url']
+                pprint.pprint(new_artist.serialize)
+            elif image[u'width'] > ARTIST_IMAGE_WIDTH_MD:
+                new_artist.img_url_md = image[u'url']
+            elif image[u'width'] > ARTIST_IMAGE_WIDTH_SM:
+                new_artist.img_url_sm = image[u'url']
+            else:
+                new_artist.img_url_xs = image[u'url']
+    print 'CREATING NEW ARTIST'
+    pprint.pprint(new_artist.serialize)
     session.add(new_artist)
 
 def genre(session, name, user_id):

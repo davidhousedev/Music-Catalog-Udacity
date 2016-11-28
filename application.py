@@ -10,6 +10,9 @@ import requests
 from helpers.http_helpers import parse_url, parse_edit_form_data
 from helpers.http_helpers import parse_genre_form_data
 
+from database_setup import ARTIST_IMAGE_WIDTH_LG, ARTIST_IMAGE_WIDTH_MD
+from database_setup import ARTIST_IMAGE_WIDTH_SM, ARTIST_IMAGE_WIDTH_XS
+
 from flask import Flask, url_for, render_template, request
 from flask import redirect, flash, jsonify, make_response
 from flask import session as login_session
@@ -72,6 +75,10 @@ def artist(artist):
                            artist=artist,
                            genres=genres,
                            songs=songs,
+                           img_lg=ARTIST_IMAGE_WIDTH_LG,
+                           img_md=ARTIST_IMAGE_WIDTH_MD,
+                           img_sm=ARTIST_IMAGE_WIDTH_SM,
+                           img_xs=ARTIST_IMAGE_WIDTH_XS,
                            cur_user=login_session)
 
 

@@ -67,12 +67,15 @@ def db_add_artist(spotify_id, login_session):
 
     session = DBSession()
     try:
-        artist_name, artist_genres = api_spotify_artist(spotify_id)
+        artist_name, artist_genres, artist_images = api_spotify_artist(spotify_id)
         # Add artist record to database
         print artist_name, spotify_id
         pprint.pprint(login_session)
-        create.artist(
-            session, artist_name, spotify_id, login_session['user_id'])
+        create.artist(session,
+                      artist_name,
+                      spotify_id,
+                      artist_images,
+                      login_session['user_id'])
         # Retrieve new artist from DB, to use artist art_id
         artist_id = get.artist_by_spotify_id(session, spotify_id).art_id
         # Add any new genres to database

@@ -63,7 +63,8 @@ def api_spotify_artist(spotify_id):
     from a Spotify API call '''
     url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
     data = json.load(urllib2.urlopen(url))
-    return (data[u'name'], data[u'genres'])
+    pprint.pprint(data)
+    return (data[u'name'], data[u'genres'], data[u'images'])
 
 def api_spotify_top_tracks(spotify_id):
     ''' Returns a descending ordered list of top track names
