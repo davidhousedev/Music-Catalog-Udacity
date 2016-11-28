@@ -87,7 +87,7 @@ def artist_create():
     if request.method == 'POST':
         form_data = request.form
         for item in form_data:
-            spotify_id = item
+            spotify_id = item  # Retrieve Spotify ID from form data
             break
         message = db.db_add_artist(spotify_id, login_session)
         if message[0] == 'add':
@@ -122,11 +122,13 @@ def artist_edit(artist):
         pprint.pprint(form_data)
         db.db_update_artist(form_data, artist['art_id'])
         return redirect(url_for('artist', artist=artist['art_id']))
-    # Prevent any artist genres from being printed as unchecked in view
+
+    # Filter out any genres that are already associated with this artist
     db_genres = db.db_get_all_genres()
     for genre in db_genres:
         if genre.name in artist['genres']:
             db_genres.remove(genre)
+
     return render_template('artist_edit.html',
                            artist=artist,
                            db_genres=db_genres,
@@ -152,7 +154,10 @@ def artist_delete(artist):
     if request.method == 'POST':
         db.db_delete_artist(artist['art_id'])
         return redirect(url_for('catalog'))
-    return render_template('artist_delete.html', artist=artist, cur_user=login_session)
+
+    return render_template('artist_delete.html',
+                           artist=artist,
+                           cur_user=login_session)
 
 
 #
@@ -219,6 +224,8 @@ def genre_edit(genre):
                          form_data['influences'],
                          genre.gen_id)
         return redirect(url_for('genre', genre=genre.gen_id))
+
+    # Filter out artists and genres that are alreay associated with this genre
     db_artists = db.db_get_all_artists()
     if gen_artists:
         gen_artist_names = listify(gen_artists, 'name')
@@ -231,6 +238,7 @@ def genre_edit(genre):
         for db_genre in db_genres:
             if db_genre.name in gen_influence_names:
                 db_genres.remove(genre.name)
+
     return render_template('genre_edit.html',
                            genre=genre,
                            gen_artists=gen_artists,
@@ -259,7 +267,10 @@ def genre_delete(genre):
     if request.method == 'POST':
         db.db_delete_genre(genre.gen_id)
         return redirect(url_for('catalog'))
-    return render_template('genre_delete.html', genre=genre, cur_user=login_session)
+
+    return render_template('genre_delete.html',
+                           genre=genre,
+                           cur_user=login_session)
 
 
 #
@@ -268,6 +279,11 @@ def genre_delete(genre):
 
 @app.route('/login')
 def show_login():
+    ''' Display login page to user, with server-generated state token.
+    State token is passed back to the server to prevent CSRF attacks
+
+    Source: This method was provided by the Authentication and Authorization course
+    hosted on Udacity.com'''
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for char in xrange(32))
     login_session['state'] = state
@@ -276,6 +292,12 @@ def show_login():
 
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
+    ''' When provided with an access token, retrieves user information from
+    Facebook and stores extended-use access token in user session. If user
+    does not currently exist in database, create a new user record.
+
+    Source: This method was provided by the Authentication and Authorization course
+    hosted on Udacity.com'''
     # Ensure that user is logging in from the login screen
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -333,6 +355,12 @@ def fbconnect():
 
 @app.route('/gconnect', methods=['POST'])
 def authenticate_user():
+    ''' When provided with a Google ID token, retrieves an API access token from
+    Google to allow server-side API calls on behalf of the user. If the user does not
+    currently exist in the database, creates a new user record.
+
+    Source: This method was provided by the Authentication and Authorization course
+    hosted on Udacity.com'''
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -357,12 +385,14 @@ def authenticate_user():
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
+    # Verify that the access token is used for the intended user
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
         response = make_response(
             json.dumps("Token's user ID doesn't match given user ID"), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+    # Verify that the access token is valid for this app.
     if result['issued_to'] != GOOGLE_CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
@@ -404,6 +434,11 @@ def authenticate_user():
 
 @app.route('/disconnect')
 def disconnect_user():
+    ''' Logs user out from their third-party login service, and clears
+    the current login session.
+
+    Source: This method was provided by the Authentication and Authorization course
+    hosted on Udacity.com'''
     if 'provider' in login_session:
         provider = login_session['provider']
         if provider == 'google':
@@ -437,6 +472,10 @@ def disconnect_user():
 
 
 def fbdisconnect():
+    ''' Disconnects user's login session on this app from Facebook
+
+    Source: This method was provided by the Authentication and Authorization course
+    hosted on Udacity.com'''
     facebook_id = login_session['fb_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
@@ -448,6 +487,10 @@ def fbdisconnect():
 
 
 def gdisconnect():
+    ''' Disconnects user's login session on this app from Google
+
+    Source: This method was provided by the Authentication and Authorization course
+    hosted on Udacity.com'''
     access_token = login_session.get('access_token')
     if access_token is None:
         return False
@@ -469,8 +512,10 @@ def gdisconnect():
 def json_artists():
     artists = db.db_get_all_artists()
     artists_arry = None
+    # If database data exists, prepare it to be returned as JSON
     if artists:
         artists_arry = [artist.serialize for artist in artists]
+
     return jsonify(artists=artists_arry)
 
 
@@ -478,8 +523,10 @@ def json_artists():
 def json_genres():
     genres = db.db_get_all_genres()
     genres_arry = None
+    # If database data exists, prepare it to be returned as JSON
     if genres:
         genres_arry = [genre.serialize for genre in genres]
+
     return jsonify(genres=genres_arry)
 
 
@@ -489,6 +536,7 @@ def json_genre(genre):
     genre, artists, influences = db.db_get_genre(parse_url(genre))
 
     genre_dict = dict(genre=None, artists=None, influences=None)
+    # If database data exists, prepare it to be returned as JSON
     if genre:
         genre_dict['genre'] = genre.serialize
     if artists:
@@ -505,6 +553,7 @@ def json_artist(artist):
     artist, genres, songs = db.db_get_artist(parse_url(artist))
 
     artist_dict = dict(artist=None, genres=None, songs=None)
+    # If database data exists, prepare it to be returned as JSON
     if artist:
         artist_dict['artist'] = artist.serialize
     if songs:
@@ -524,6 +573,7 @@ def json_user(user):
     genres = db.db_get_genres_by_user(user_id)
 
     user_dict = dict(name=None, artists=None, genres=None)
+    # If database data exists, prepare it to be returned as JSON
     if user:
         user_dict['name'] = user.name
     if artists:
@@ -532,7 +582,6 @@ def json_user(user):
         user_dict['genres'] = [genre.serialize for genre in genres]
 
     return jsonify(user=user_dict)
-
 
 
 if __name__ == '__main__':
