@@ -119,6 +119,10 @@ class Artist(Base):
     url_name = Column(String(300), nullable=False, unique=True)
     created = Column(String(100), nullable=False)
     updated = Column(String(100), default=datetime.datetime.utcnow)
+    img_url_lg = Column(String(300), unique=True)
+    img_url_md = Column(String(300), unique=True)
+    img_url_sm = Column(String(300), unique=True)
+    img_url_xs = Column(String(300), unique=True)
     user = Column(Integer, ForeignKey('user.user_id'), nullable=False)
 
     @property
