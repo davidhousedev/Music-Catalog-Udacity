@@ -2,21 +2,50 @@
 {% block title %}{{artist.name}}{% endblock %}
 {% block head %}
     {# Page-specific JS and CSS #}
+    <link rel="stylesheet" href="/static/artist.css">
 {% endblock %}
 {% block content %}
-    <h1>{{artist.name}}</h1>
-    {% if cur_user and cur_user['user_id'] == artist.user %}
-        <a href="{{url_for('artist_edit', artist=artist.url_name)}}">Edit</a>
-        <a href="{{url_for('artist_delete', artist=artist.url_name)}}">Delete</a>
-    {% endif %}
+    <div class="row artist-header">
+        <div class="col-xs-12 text-xs-center">
+            <picture>
+                {% if artist.img_url_lg %}
+                    <source media="(min-width: {{img_lg}}px)" srcset="{{artist.img_url_lg}}">
+                {% endif %}
+                {% if artist.img_url_md %}
+                    <source media="(min-width: {{img_md}}px)" srcset="{{artist.img_url_md}}">
+                {% endif %}
+                {% if artist.img_url_sm %}
+                    <source media="(min-width: {{img_sm}}px)" srcset="{{artist.img_url_sm}}">
+                {% endif %}
+                {% if artist.img_url_xs %}
+                    <source media="(min-width: {{img_xs}}px)" srcset="{{artist.img_url_xs}}">
+                {% endif %}
+                <img class="img-fluid artist-img" src="">
+            </picture>
+            <h1>{{artist.name}}</h1>
+            {% if cur_user and cur_user['user_id'] == artist.user %}
+                <a class="btn btn-sm btn-warning" href="{{url_for('artist_edit', artist=artist.url_name)}}">Edit</a>
+                <a class="btn btn-sm btn-danger" href="{{url_for('artist_delete', artist=artist.url_name)}}">Delete</a>
+            {% endif %}
+        </div>
+    </div>
 
-    <h4>Top songs:</h4>
-    {% for song in songs %}
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/{{song.youtube_id}}" frameborder="0" allowfullscreen></iframe>
-    {% endfor %}
-    <h4>Genres:</h4>
-    {% for genre in genres %}
-        <p>{{genre.name}}</p>
-    {% endfor %}
+{% for song in songs %}
+    <div class="row video">
+        <div class="col-xs-12">
+            <div class="video-wrapper">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{song.youtube_id}}" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+    <div class="col-xs-12 videos">
+        <h4>Genres:</h4>
+        {% for genre in genres %}
+            <p>{{genre.name}}</p>
+        {% endfor %}
+    </div>
+
 
 {% endblock %}
