@@ -110,7 +110,9 @@ class Artist(Base):
         * (REQ) url_name: Str, artist's name as it appears in a URL
         * emergence: Str, aproximate date when artist began playing music
         * (REQ) created: Str, time created in database, set to datetime.utcnow
-            when creating an artist in DB"""
+            when creating an artist in DB
+        * img_url_*: lg, md, sm, xs, spotify image URLs, at different image sizes
+                     aprox. sizes: lg=1000x600, md=650x450, sm=200x130, xs=60x40"""
     __tablename__ = 'artist'
 
     art_id = Column(Integer, primary_key=True)
@@ -119,10 +121,10 @@ class Artist(Base):
     url_name = Column(String(300), nullable=False, unique=True)
     created = Column(String(100), nullable=False)
     updated = Column(String(100), default=datetime.datetime.utcnow)
-    img_url_lg = Column(String(300), unique=True)
-    img_url_md = Column(String(300), unique=True)
-    img_url_sm = Column(String(300), unique=True)
-    img_url_xs = Column(String(300), unique=True)
+    img_url_lg = Column(String(300), default=None)
+    img_url_md = Column(String(300), default=None)
+    img_url_sm = Column(String(300), default=None)
+    img_url_xs = Column(String(300), default=None)
     user = Column(Integer, ForeignKey('user.user_id'), nullable=False)
 
     @property
@@ -134,7 +136,11 @@ class Artist(Base):
             'spotify_id': self.spotify_id,
             'art_id': self.art_id,
             'created': self.created,
-            'updated': self.updated
+            'updated': self.updated,
+            'img_url_lg': self.img_url_lg,
+            'img_url_md': self.img_url_md,
+            'img_url_sm': self.img_url_sm,
+            'img_url_xs': self.img_url_xs
         }
 
 
