@@ -107,31 +107,33 @@ def artist_create():
            methods=['GET', 'POST'])
 def artist_edit(artist):
     """ Edit database entry of a specific artist """
-    artist = db.db_get_artist(parse_url(artist))
+    artist, genres, songs  = db.db_get_artist(parse_url(artist))
 
     # Verify that the current user has permission to perform this action
     if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
-    if login_session['user_id'] != artist['user']:
+    if login_session['user_id'] != artist.user:
         flash("You cannot edit another user's artist")
         return redirect(url_for('artist', artist=artist['url_name']))
 
     if request.method == 'POST':
         form_data = parse_edit_form_data(request.form)
         pprint.pprint(form_data)
-        db.db_update_artist(form_data, artist['art_id'])
-        return redirect(url_for('artist', artist=artist['art_id']))
+        db.db_update_artist(form_data, artist.art_id)
+        return redirect(url_for('artist', artist=artist.art_id))
 
     # Filter out any genres that are already associated with this artist
     db_genres = db.db_get_all_genres()
     for genre in db_genres:
-        if genre.name in artist['genres']:
+        if genre.name in listify(genres, 'name'):
             db_genres.remove(genre)
 
     return render_template('artist_edit.html',
                            artist=artist,
+                           artist_genres=genres,
                            db_genres=db_genres,
+                           artist_songs=songs,
                            cur_user=login_session)
 
 
@@ -141,18 +143,18 @@ def artist_edit(artist):
            methods=['GET', 'POST'])
 def artist_delete(artist):
     """ Delete an artist from the database """
-    artist = db.db_get_artist(artist)
+    artist = db.db_get_artist(artist)[0]
 
     # Verify that the current user has permission to perform this action
     if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
-    if login_session['user_id'] != artist['user']:
+    if login_session['user_id'] != artist.user:
         flash("You cannot delete another user's artist")
         return redirect(url_for('artist', artist=artist['url_name']))
 
     if request.method == 'POST':
-        db.db_delete_artist(artist['art_id'])
+        db.db_delete_artist(artist.art_id)
         return redirect(url_for('catalog'))
 
     return render_template('artist_delete.html',
