@@ -18,7 +18,7 @@ import database_controller as db
 from database.database_helpers import url_name, listify
 
 from oauth2client import client, crypt
-from api_keys import GOOGLE_CLIENT_ID
+from api_keys import GOOGLE_CLIENT_ID, FLASK_SECRET
 
 
 app = Flask(__name__)
@@ -536,6 +536,6 @@ def json_user(user):
 
 
 if __name__ == '__main__':
-    app.secret_key = 'turtles'  # TODO: Change me for production
+    app.secret_key = FLASK_SECRET
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
