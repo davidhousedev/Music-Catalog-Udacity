@@ -50,7 +50,7 @@ def db_get_user(user):
     ''' Returns a user object either by email address or by user_id '''
     session = DBSession()
     try:
-        if user is int:
+        if type(user) is int:
             return get.user_by_id(session, user)
         else:
             return get.user_by_email(session, user)

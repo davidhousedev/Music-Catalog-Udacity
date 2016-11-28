@@ -27,7 +27,6 @@ app = Flask(__name__)
 MAX_RECENT_ADDITIONS = 5
 
 
-
 #
 # Primary Views
 #
@@ -44,11 +43,13 @@ def catalog():
                            recent_items=recent_items,
                            cur_user=login_session)
 
+
 @app.route('/user/<int:user>/')
 def user(user):
     """ Displays all genres and artists created by a specific user """
     user_id = int(user)
     user = db.db_get_user(user_id)
+    print user
     artists = db.db_get_artists_by_user(user_id)
     genres = db.db_get_genres_by_user(user_id)
     return render_template('user.html',
@@ -56,8 +57,6 @@ def user(user):
                            artists=artists,
                            genres=genres,
                            cur_user=login_session)
-
-
 
 
 #
@@ -154,8 +153,6 @@ def artist_delete(artist):
         db.db_delete_artist(artist['art_id'])
         return redirect(url_for('catalog'))
     return render_template('artist_delete.html', artist=artist, cur_user=login_session)
-
-
 
 
 #
@@ -265,8 +262,6 @@ def genre_delete(genre):
     return render_template('genre_delete.html', genre=genre, cur_user=login_session)
 
 
-
-
 #
 # Authentication
 #
@@ -308,7 +303,6 @@ def fbconnect():
     http = httplib2.Http()
     result = http.request(url, 'GET')[1]
     data = json.loads(result)
-
 
     login_session['username'] = data['name']
     login_session['email'] = data['email']
@@ -416,14 +410,16 @@ def disconnect_user():
             if gdisconnect():
                 del login_session['gplus_id']
             else:
-                response = make_response(json.dumps("Failed to disconnect Google user."), 401)
+                response = make_response(
+                    json.dumps("Failed to disconnect Google user."), 401)
                 response.headers['Content-Type'] = 'application/json'
                 return response
         if provider == 'facebook':
             if fbdisconnect():
                 del login_session['fb_id']
             else:
-                response = make_response(json.dumps("Failed to disconnect Facebook user."), 401)
+                response = make_response(
+                    json.dumps("Failed to disconnect Facebook user."), 401)
                 response.headers['Content-Type'] = 'application/json'
                 return response
 
@@ -439,11 +435,13 @@ def disconnect_user():
         return response
     return redirect(url_for('catalog'))
 
+
 def fbdisconnect():
     facebook_id = login_session['fb_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
-    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (
+        facebook_id, access_token)
     http = httplib2.Http()
     result = http.request(url, 'DELETE')[1]
     return "you have been logged out"
@@ -463,8 +461,6 @@ def gdisconnect():
         return False
 
 
-
-
 #
 # API Endpoints
 #
@@ -472,25 +468,70 @@ def gdisconnect():
 @app.route('/artists/json/')
 def json_artists():
     artists = db.db_get_all_artists()
-    return jsonify(artists=[artist.serialize for artist in artists])
+    artists_arry = None
+    if artists:
+        artists_arry = [artist.serialize for artist in artists]
+    return jsonify(artists=artists_arry)
 
-#TODO: All genres
+
 @app.route('/genres/json/')
 def json_genres():
     genres = db.db_get_all_genres()
-    return jsonify(genres=[genre.serialize for genre in genres])
-#TODO: Single Genre: all influences and artists
+    genres_arry = None
+    if genres:
+        genres_arry = [genre.serialize for genre in genres]
+    return jsonify(genres=genres_arry)
+
+
 @app.route('/genre/<int:genre>/json/')
 @app.route('/genre/<genre>/json/')
 def json_genre(genre):
     genre, artists, influences = db.db_get_genre(parse_url(genre))
-    return jsonify(genre=genre.serialize,
-                   artists=[artist.serialize for artist in artists],
-                   influences=[inf.serialize for inf in influences])
-#TODO: Single artist: all genres and top songs
 
-#TODO: User: all artists and genres
+    genre_dict = dict(genre=None, artists=None, influences=None)
+    if genre:
+        genre_dict['genre'] = genre.serialize
+    if artists:
+        genre_dict['artists'] = [artist.serialize for artist in artists]
+    if influences:
+        genre_dict['influences'] = [inf.serialize for inf in influences]
 
+    return jsonify(genre=genre_dict)
+
+
+@app.route('/artist/<int:artist>/json/')
+@app.route('/artist/<artist>/json/')
+def json_artist(artist):
+    artist, genres, songs = db.db_get_artist(parse_url(artist))
+
+    artist_dict = dict(artist=None, genres=None, songs=None)
+    if artist:
+        artist_dict['artist'] = artist.serialize
+    if songs:
+        artist_dict['songs'] = [song.serialize for song in songs]
+    if genres:
+        artist_dict['genres'] = [genre.serialize for genre in genres]
+
+    return jsonify(artist=artist_dict)
+
+
+@app.route('/user/<int:user>/json/')
+def json_user(user):
+    """ Displays all genres and artists created by a specific user """
+    user_id = int(user)
+    user = db.db_get_user(user_id)
+    artists = db.db_get_artists_by_user(user_id)
+    genres = db.db_get_genres_by_user(user_id)
+
+    user_dict = dict(name=None, artists=None, genres=None)
+    if user:
+        user_dict['name'] = user.name
+    if artists:
+        user_dict['artists'] = [artist.serialize for artist in artists]
+    if genres:
+        user_dict['genres'] = [genre.serialize for genre in genres]
+
+    return jsonify(user=user_dict)
 
 
 
