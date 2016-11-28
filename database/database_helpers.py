@@ -1,4 +1,4 @@
-import json, urllib, urllib2
+import json, urllib, urllib2, pprint
 from unicodedata import normalize
 from database_setup import Base, Artist
 from api_keys import GOOGLE_API_KEY
@@ -35,6 +35,8 @@ def get_youtube_ids(artist_name, top_song_list):
     youtube_ids = []
     for song in top_song_list:
         vid_id = api_youtube_first_result(artist_name, song)
+        if vid_id == None:
+            continue
         youtube_ids.append(vid_id)
         if len(youtube_ids) == TOP_SONG_LIMIT:
             break
@@ -51,7 +53,10 @@ def api_youtube_first_result(artist, song_name):
                'key': GOOGLE_API_KEY}
     url += '?' + urllib.urlencode(headers)
     youtube_data = json.load(urllib2.urlopen(url))
-    return youtube_data[u'items'][0][u'id'][u'videoId']
+    for item in youtube_data[u'items']:
+        if item[u'id'][u'kind'] == u'youtube#video':
+            return item[u'id'][u'videoId']
+    return None
 
 def api_spotify_artist(spotify_id):
     ''' Returns an artist name and genres in a tuple
