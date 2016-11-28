@@ -92,11 +92,11 @@ def artist_create():
             break
         message = db.db_add_artist(spotify_id, login_session)
         if message[0] == 'add':
-            artist = db.db_get_artist(message[1])
+            artist = db.db_get_artist(message[1])[0]
 
-        obj = dict(artist_name=artist['name'],
+        obj = dict(artist_name=artist.name,
                    spotify_id=spotify_id,
-                   artist_url=url_for('artist', artist=artist['url_name']))
+                   artist_url=url_for('artist', artist=artist.url_name))
         return json.dumps(obj)
     else:
         return render_template('artist_create.html', cur_user=login_session)
