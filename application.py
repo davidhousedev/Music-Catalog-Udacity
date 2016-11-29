@@ -234,18 +234,14 @@ def genre_edit(genre):
         return redirect(url_for('genre', genre=genre.gen_id))
 
     # Filter out artists and genres that are alreay associated with this genre
-    db_artists = db.db_get_all_artists()
-    if gen_artists:
-        gen_artist_names = listify(gen_artists, 'name')
-        for db_artist in db_artists:
-            if db_artist.name in gen_artist_names:
-                db_artists.remove(db_artist)
+    db_artist_objs = db.db_get_all_artists()
+    gen_art_names = listify(gen_artists, 'name')
+    db_artists = [
+        art for art in db_artist_objs if art.name not in gen_art_names]
+
     db_genres = db.db_get_all_genres()
-    if gen_influences:
-        gen_influence_names = listify(gen_influences, 'name')
-        for db_genre in db_genres:
-            if db_genre.name in gen_influence_names:
-                db_genres.remove(genre.name)
+    gen_inf_names = listify(gen_influences, 'name')
+    db_genres = [gen for gen in db_genres if gen.name not in gen_inf_names]
 
     return render_template('genre_edit.html',
                            genre=genre,
