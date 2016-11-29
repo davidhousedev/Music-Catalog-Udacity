@@ -12,20 +12,20 @@
         <label>Genres
             {% for genre in artist_genres %}
                 <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre-{{genre.name}}" id={{genre.name}} checked />
+                <input type="checkbox" name="genre|{{genre.name}}" id={{genre.name}} checked />
             {% endfor %}
             {% for genre in db_genres %}
                 <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre-{{genre.name}}" id={{genre.name}} />
+                <input type="checkbox" name="genre|{{genre.name}}" id={{genre.name}} />
             {% endfor %}
         </label>
         <label>Top Songs
             {% set count = 0 %}
             {% for song in artist_songs %}
-                <label for="{{song.youtube_id}}-title">Title</label>
-                <input type="text" name="song-title-{{count}}" id="{{song.youtube_id}}-title" value="{{song.name}}" />
-                <label for="{{song.youtube_id}}-id">Youtube Video ID</label>
-                <input type="text" name="song-id-{{count}}" id="{{song.youtube_id}}-id" value="{{song.youtube_id}}"/>
+                <label for="{{song.youtube_id}}|title">Title</label>
+                <input type="text" name="song|title|{{count}}" id="{{song.youtube_id}}|title" value="{{song.name}}" />
+                <label for="{{song.youtube_id}}|id">Youtube Video ID</label>
+                <input type="text" name="song|id|{{count}}" id="{{song.youtube_id}}|id" value="{{song.youtube_id}}"/>
                 {% set count = count + 1 %}
             {% endfor %}
         </label>

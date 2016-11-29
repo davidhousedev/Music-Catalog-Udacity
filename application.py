@@ -114,7 +114,7 @@ def artist_create():
            methods=['GET', 'POST'])
 def artist_edit(artist):
     """ Edit database entry of a specific artist """
-    artist, genres, songs  = db.db_get_artist(parse_url(artist))
+    artist, genres, songs = db.db_get_artist(parse_url(artist))
 
     # Verify that the current user has permission to perform this action
     if 'user_id' not in login_session:
@@ -132,16 +132,9 @@ def artist_edit(artist):
 
     # Filter out any genres that are already associated with this artist
     db_genre_objs = db.db_get_all_genres()
-    #pprint.pprint(listify(db_genre_objs, 'name'))
-    #pprint.pprint(listify(genres, 'name'))
-    # for genre in db_genres:
-    #     print 'genre is %s' % genre.name
-    #     if genre.name in listify(genres, 'name'):
-    #         print 'removing genre: %s' % genre.name
-    #         db_genres.remove(genre)
     art_gen_names = listify(genres, 'name')
-    db_genres = [genre for genre in db_genre_objs if genre.name not in art_gen_names]
-    #pprint.pprint(listify(db_genres, 'name'))
+    db_genres = [
+        genre for genre in db_genre_objs if genre.name not in art_gen_names]
     return render_template('artist_edit.html',
                            artist=artist,
                            artist_genres=genres,

@@ -15,7 +15,7 @@ def parse_edit_form_data(form_data):
                 genres=[],
                 top_songs={})
     for key, value in form_data.iteritems():
-        key = key.rsplit('-')
+        key = key.rsplit('|')
         if key[0] == r'name':
             data['name'] = value
             continue
@@ -42,7 +42,7 @@ def parse_genre_form_data(form_data):
         if item == 'name':
             genre['name'] = form_data['name']
         else:
-            item_split = item.split('-')
+            item_split = item.split('|')
             if item_split[0] == 'artist':
                 genre['artists'].append(int(item_split[1]))
             else:

@@ -14,12 +14,12 @@
             {% for artist in gen_artists %}
                 <br>
                 <label for="{{artist.name}}">{{artist.name}}</label>
-                <input type="checkbox" name="artist-{{artist.art_id}}" id="{{artist.name}}" checked />
+                <input type="checkbox" name="artist|{{artist.art_id}}" id="{{artist.name}}" checked />
             {% endfor %}
             {% for artist in db_artists %}
                 <br>
                 <label for="{{artist.name}}">{{artist.name}}</label>
-                <input type="checkbox" name="artist-{{artist.art_id}}" id="{{artist.name}}" />
+                <input type="checkbox" name="artist|{{artist.art_id}}" id="{{artist.name}}" />
             {% endfor %}
         </label>
         <br>
@@ -27,12 +27,12 @@
             {% for genre in gen_influences %}
                 <br>
                 <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre-{{genre.gen_id}}" id="{{genre.name}}" checked />
+                <input type="checkbox" name="genre|{{genre.gen_id}}" id="{{genre.name}}" checked />
             {% endfor %}
             {% for genre in db_genres %}
                 <br>
                 <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre-{{genre.gen_id}}" id="{{genre.name}}" />
+                <input type="checkbox" name="genre|{{genre.gen_id}}" id="{{genre.name}}" />
             {% endfor %}
         </label>
         <br>
