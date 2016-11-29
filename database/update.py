@@ -73,4 +73,4 @@ def influences(session, children, gen_id):
             create.influence(session, gen_id, child)
     for child in db_children_ids:
         if child not in children:
-            delete.influence(gen_id, child)
+            delete.influence(session, gen_id, child)
