@@ -12,7 +12,7 @@
         <label>Genres
             {% for genre in artist_genres %}
                 <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre.name-{{genre.name}}" id={{genre.name}} checked/>
+                <input type="checkbox" name="genre-{{genre.name}}" id={{genre.name}} checked />
             {% endfor %}
             {% for genre in db_genres %}
                 <label for="{{genre.name}}">{{genre.name}}</label>
