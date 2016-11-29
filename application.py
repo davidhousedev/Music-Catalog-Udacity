@@ -131,11 +131,17 @@ def artist_edit(artist):
         return redirect(url_for('artist', artist=artist.art_id))
 
     # Filter out any genres that are already associated with this artist
-    db_genres = db.db_get_all_genres()
-    for genre in db_genres:
-        if genre.name in listify(genres, 'name'):
-            db_genres.remove(genre)
-
+    db_genre_objs = db.db_get_all_genres()
+    #pprint.pprint(listify(db_genre_objs, 'name'))
+    #pprint.pprint(listify(genres, 'name'))
+    # for genre in db_genres:
+    #     print 'genre is %s' % genre.name
+    #     if genre.name in listify(genres, 'name'):
+    #         print 'removing genre: %s' % genre.name
+    #         db_genres.remove(genre)
+    art_gen_names = listify(genres, 'name')
+    db_genres = [genre for genre in db_genre_objs if genre.name not in art_gen_names]
+    #pprint.pprint(listify(db_genres, 'name'))
     return render_template('artist_edit.html',
                            artist=artist,
                            artist_genres=genres,
