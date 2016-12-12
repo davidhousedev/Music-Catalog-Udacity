@@ -9,6 +9,7 @@
     <form method="POST">
         <label for="name">Name</label>
         <input type="text" name="name" value="{{genre.name}}" id="name"/>
+        <h1>genre id is {{genre.gen_id}}</h1>
         <br>
         <label>Artists
             {% for artist in gen_artists %}
@@ -24,15 +25,15 @@
         </label>
         <br>
         <label>Genres
-            {% for genre in gen_influences %}
+            {% for gen in gen_influences %}
                 <br>
-                <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre|{{genre.gen_id}}" id="{{genre.name}}" checked />
+                <label for="{{gen.name}}">{{gen.name}}</label>
+                <input type="checkbox" name="gen|{{gen.gen_id}}" id="{{gen.name}}" checked />
             {% endfor %}
-            {% for genre in db_genres %}
+            {% for gen in db_genres %}
                 <br>
-                <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre|{{genre.gen_id}}" id="{{genre.name}}" />
+                <label for="{{gen.name}}">{{gen.name}}</label>
+                <input type="checkbox" name="gen|{{gen.gen_id}}" id="{{gen.name}}" />
             {% endfor %}
         </label>
         <br>

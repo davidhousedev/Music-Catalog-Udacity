@@ -215,23 +215,24 @@ def genre_create():
            methods=['GET', 'POST'])
 def genre_edit(genre):
     """ Edit a specific genre """
-    genre, gen_artists, gen_influences = db.db_get_genre(parse_url(genre))
+    db_genre, gen_artists, gen_influences = db.db_get_genre(parse_url(genre))
+    display_genre = db_genre  # Hacked solution to a strange template display issue
 
     # Verify that the current user has permission to perform this action
     if 'user_id' not in login_session:
         flash('You must be logged in to do that')
         return redirect(url_for('show_login'))
-    if login_session['user_id'] != genre.user:
+    if login_session['user_id'] != db_genre.user:
         flash("You cannot edit another user's genre")
-        return redirect(url_for('genre', genre=genre.url_name))
+        return redirect(url_for('genre', genre=db_genre.url_name))
 
     if request.method == 'POST':
         form_data = parse_genre_form_data(request.form)
         db.db_edit_genre(form_data['name'],
                          form_data['artists'],
                          form_data['influences'],
-                         genre.gen_id)
-        return redirect(url_for('genre', genre=genre.gen_id))
+                         db_genre.gen_id)
+        return redirect(url_for('genre', genre=db_genre.gen_id))
 
     # Filter out artists and genres that are alreay associated with this genre
     db_artist_objs = db.db_get_all_artists()
@@ -240,11 +241,18 @@ def genre_edit(genre):
         art for art in db_artist_objs if art.name not in gen_art_names]
 
     db_genres = db.db_get_all_genres()
+    # Remove the viewed genre from display
+    for gen in db_genres:
+        if gen.gen_id == db_genre.gen_id:
+            print 'deleting %s' % gen.name
+            db_genres.remove(gen)
+            break
     gen_inf_names = listify(gen_influences, 'name')
     db_genres = [gen for gen in db_genres if gen.name not in gen_inf_names]
 
+
     return render_template('genre_edit.html',
-                           genre=genre,
+                           genre=display_genre,
                            gen_artists=gen_artists,
                            gen_influences=gen_influences,
                            db_artists=db_artists,

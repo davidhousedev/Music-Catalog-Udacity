@@ -130,6 +130,7 @@ def influences_by_genre_id(session, genre_id):
     for inf in influence_objs:
         gen = session.query(Genre).filter_by(gen_id=inf.child).one()
         genres.append(gen)
+
     return sorted(genres, key=__index_to_name)
 
 # Helpers
