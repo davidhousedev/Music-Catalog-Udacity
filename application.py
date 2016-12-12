@@ -181,6 +181,10 @@ def genre(genre):
                            genre=genre,
                            artists=artists,
                            influences=influences,
+                           img_lg=ARTIST_IMAGE_WIDTH_LG,
+                           img_md=ARTIST_IMAGE_WIDTH_MD,
+                           img_sm=ARTIST_IMAGE_WIDTH_SM,
+                           img_xs=ARTIST_IMAGE_WIDTH_XS,
                            cur_user=login_session)
 
 

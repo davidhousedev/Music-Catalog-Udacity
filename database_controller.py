@@ -207,6 +207,8 @@ def db_get_genre(genre):
             db_genre = get.genre_by_url_name(session, genre)
         artists = get.artists_by_genre(session, db_genre.gen_id)
         influences = get.influences_by_genre_id(session, db_genre.gen_id)
+        for genre in influences:
+            genre.num_artists = len(genre.artists)
     except Exception, e:
         raise e
     finally:
