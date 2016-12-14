@@ -205,6 +205,11 @@ def genre_create():
     genres = db.db_get_all_genres()
     if request.method == 'POST':
         form_data = parse_genre_form_data(request.form)
+
+        if not form_data['name']:
+            flash('Genre name cannot be blank')
+            return redirect(url_for('genre_create'))
+
         genre_name = db.db_create_genre(form_data['name'],
                                         form_data['artists'],
                                         form_data['influences'],
