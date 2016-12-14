@@ -286,11 +286,11 @@ def db_delete_genre(genre_id):
     session = DBSession()
     try:
         genre = get.genre_by_id(session, genre_id)
-        delete.database_object(session, genre)
         artist_genres = get.artist_genres_by_genre(session, genre_id)
         delete.database_objects(session, artist_genres)
         influences = get.influences_by_genre_id(session, genre_id)
         delete.database_objects(session, influences)
+        delete.database_object(session, genre)
         session.commit()
     except Exception, e:
         session.rollback()
