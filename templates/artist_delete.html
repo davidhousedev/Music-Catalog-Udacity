@@ -6,10 +6,18 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Are you sure you want to delete {{artist.name}}?</h2>
 
     <form method="POST">
-        <button>Delete</button>
-        <a href="{{url_for('artist', artist=artist['url_name'])}}">Cancel</a>
+        <div class="form-group row">
+            <div class="col-xs-12">
+                <h3>Are you sure you want to delete <strong>{{artist.name}}</strong>?</h3>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-xs-12">
+                <button class="btn btn-danger">Delete</button>
+                <a class="btn btn-secondary" href="{{url_for('artist', artist=artist['url_name'])}}">Cancel</a>
+            </div>
+        </div>
     </form>
 {% endblock %}
