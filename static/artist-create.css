@@ -1,0 +1,10 @@
+.artist {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.artist-thumbnail {
+    max-height: 64px;
+    max-width: 64px;
+    margin-right: 10px;
+}

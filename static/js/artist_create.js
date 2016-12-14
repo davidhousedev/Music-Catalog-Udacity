@@ -13,10 +13,11 @@ $(function(){
                 searchError("No results from search");
             }
             var artists = data.artists.items; // Extract artist array
+            $("#artists").text(''); // Clear any existing search results
             // Print all artists to browser window
             for (var i = 0; i < artists.length; i++){
-                var $artistDiv = $('<li>', {id: i,
-                                            'class': 'artist'});
+                var $artistDiv = $('<div>', {id: i,
+                                            'class': 'artist row'});
                 var addListener = function(id){
                     $artistDiv.click(function(){
                         createArtist($(this),
@@ -25,6 +26,11 @@ $(function(){
                     })
                 }($artistDiv.attr('id')); //add current artist event listener
                 $artistDiv.text(artists[i].name);
+                var $artistImg = $(document.createElement('img'));
+                var imgUrl = artists[i].images.pop().url;
+                $artistImg.attr('src', imgUrl);
+                $artistImg.attr('class', 'artist-thumbnail float-xs-left');
+                $artistDiv.append($artistImg);
                 $("#artists").append($artistDiv);
             }
         });
@@ -40,7 +46,7 @@ function searchError(err){
 
 function createArtist(element, spotifyId, name){
     element.hide();
-    var status = $(document.createElement('li'));
+    var status = $(document.createElement('div'));
     status.attr('id', spotifyId);
     status.css('display', 'block');
     console.log(status);
