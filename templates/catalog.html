@@ -4,20 +4,47 @@
     {# Page-specific JS and CSS #}
 {% endblock %}
 {% block content %}
-    <div class="col-xs-6">
-        <h2>Genres</h2>
-        <ul>
-            {% for genre in genres %}
-                <li>
-                    <a class="text-capitalize" href="{{url_for('genre', genre=genre.url_name)}}">{{genre.name}}  {{genre.num_artists}}</a>
-                </li>
+    <div class="row">
+        <div class="col-xs-6">
+            <h2>Genres</h2>
+            <ul class="list-group influence-list">
+                {% for gen in genres %}
+                    <a href="{{url_for('genre', genre=gen.url_name)}}">
+                        <li class="list-group-item">
+                                <span class="text-capitalize">{{gen.name}}</span>
+                                <span class="tag tag-default tag-pill">Artists: {{gen.num_artists}}</span>
+                        </li>
+                    </a>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-xs-6">
+            <h2>Recent Additions</h2>
+            {% for artist in recent_items %}
+                <a href="{{url_for('artist', artist=artist.url_name)}}">
+                    <div class="card card-block text-xs-center">
+                        <picture>
+                            {% if artist.img_url_lg %}
+                                <source media="(min-width: {{img_lg}}px)" srcset="{{artist.img_url_lg}}">
+                            {% endif %}
+                            {% if artist.img_url_md %}
+                                <source media="(min-width: {{img_md}}px)" srcset="{{artist.img_url_md}}">
+                            {% endif %}
+                            {% if artist.img_url_sm %}
+                                <source media="(min-width: {{img_sm}}px)" srcset="{{artist.img_url_sm}}">
+                            {% endif %}
+                            {% if artist.img_url_xs %}
+                                <source media="(min-width: {{img_xs}}px)" srcset="{{artist.img_url_xs}}">
+                            {% endif %}
+                            <img class="card-img-top img-fluid artist-img" src="">
+                        </picture>
+
+                        <h4 class="card-title text-muted">{{artist.name}}</h4>
+                    </div>
+                </a>
             {% endfor %}
-        </ul>
+        </div>
 
     </div>
 
-    <h2>Recent Additions</h2>
-        {% for artist in recent_items %}
-            <a href="{{url_for('artist', artist=artist.url_name)}}">{{artist.name}}</a>
-        {% endfor %}
 {% endblock %}

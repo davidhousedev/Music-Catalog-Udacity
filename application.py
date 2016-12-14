@@ -44,6 +44,10 @@ def catalog():
     return render_template('catalog.html',
                            genres=genres,
                            recent_items=recent_items,
+                           img_lg=ARTIST_IMAGE_WIDTH_LG,
+                           img_md=ARTIST_IMAGE_WIDTH_MD,
+                           img_sm=ARTIST_IMAGE_WIDTH_SM,
+                           img_xs=ARTIST_IMAGE_WIDTH_XS,
                            cur_user=login_session)
 
 
