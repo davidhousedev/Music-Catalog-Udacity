@@ -48,6 +48,7 @@ function createArtist(element, spotifyId, name){
     element.hide();
     var status = $(document.createElement('div'));
     status.attr('id', spotifyId);
+    status.attr('class', 'alert alert-info')
     status.css('display', 'block');
     console.log(status);
     status.text('Adding ' + name + '...');
@@ -76,13 +77,20 @@ function addingArtist(element, name){
 
 function addingSuccessful(element, json, name){
     console.log(json);
-    element.text('Successfully added ' + name);
-    var artistLink = $(document.createElement('a'));
-    artistLink.attr('href', json.artist_url);
-    artistLink.append('View artist');
-    console.log(artistLink)
+    element.attr('class', 'alert alert-success');
+
+    // Add bolded artist name to success message
+    var $artistName = $(document.createElement('strong'));
+    $artistName.append(name);
+    element.text('Successfully added: ');
+    element.append($artistName)
+
+    // Add link to newly created artist page
+    var $artistLink = $(document.createElement('a'));
+    $artistLink.attr('href', json.artist_url);
+    $artistLink.append('View artist');
     element.append('<br>');
-    element.append(artistLink)
+    element.append($artistLink)
 }
 
 function artistAddError(status, searchResult){
