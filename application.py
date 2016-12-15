@@ -130,8 +130,8 @@ def artist_edit(artist):
 
     if request.method == 'POST':
         form_data = parse_edit_form_data(request.form)
-        pprint.pprint(form_data)
         db.db_update_artist(form_data, artist.art_id)
+        flash('Successfully updated artist: %s' % artist.name)
         return redirect(url_for('artist', artist=artist.art_id))
 
     # Filter out any genres that are already associated with this artist
@@ -165,6 +165,7 @@ def artist_delete(artist):
 
     if request.method == 'POST':
         db.db_delete_artist(artist.art_id)
+        flash('Deleted artist: %s' % artist.name)
         return redirect(url_for('catalog'))
 
     return render_template('artist_delete.html',
@@ -245,6 +246,7 @@ def genre_edit(genre):
                          form_data['artists'],
                          form_data['influences'],
                          db_genre.gen_id)
+        flash('Successfully updated genre: %s' % db_genre.name)
         return redirect(url_for('genre', genre=db_genre.gen_id))
 
     # Filter out artists and genres that are alreay associated with this genre
@@ -291,6 +293,7 @@ def genre_delete(genre):
 
     if request.method == 'POST':
         db.db_delete_genre(genre.gen_id)
+        flash('Deleted genre: %s' % genre.name)
         return redirect(url_for('catalog'))
 
     return render_template('genre_delete.html',
@@ -374,7 +377,6 @@ def fbconnect():
         db_user = db.db_create_user(login_session)
     print 'logging in with user ID %s, %s' % (db_user.user_id, db_user.email)
     login_session['user_id'] = db_user.user_id
-
     return redirect(url_for('catalog'))
 
 
@@ -453,7 +455,6 @@ def authenticate_user():
         db_user = db.db_create_user(login_session)
     print 'logging in with user ID %s, %s' % (db_user.user_id, db_user.email)
     login_session['user_id'] = db_user.user_id
-
     return redirect(url_for('catalog'))
 
 
@@ -493,6 +494,7 @@ def disconnect_user():
         response = make_response(json.dumps("Failed to disconnect user"), 400)
         response.headers['Content-Type'] = 'application/json'
         return response
+    flash('Successfully logged out')
     return redirect(url_for('catalog'))
 
 
