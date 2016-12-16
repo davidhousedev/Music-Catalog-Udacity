@@ -15,7 +15,7 @@
         {% endif %}
     </div>
 
-
+{% if artists %}
     <div class="card-columns">
     {% for artist in artists %}
         <a href="{{url_for('artist', artist=artist.url_name)}}">
@@ -42,7 +42,14 @@
         </a>
     {% endfor %}
     </div>
+{% else %}
+    <div class="alert alert-warning" role="alert">
+        This genre is not associated with any artists
+    </div>
+{% endif %}
 
+
+{% if influences %}
     <h3>Sub-genres</h3>
     <div class="col-xs-12 col-sm-8 col-md-6">
         <ul class="list-group influence-list">
@@ -56,6 +63,8 @@
             {% endfor %}
         </ul>
     </div>
+{% endif %}
+
 
 
 {% endblock %}
