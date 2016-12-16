@@ -41,6 +41,14 @@ def catalog():
     """ Displays HTML tempplate for catalog homepage """
     genres = db.db_get_all_genres()
     recent_items = db.db_get_recent_additions(MAX_RECENT_ADDITIONS)
+
+    # Welcome new users with instructions to log in
+    if 'username' not in login_session:
+        if 'logged_out' not in login_session:
+            welcome_msg = 'Welcome! Please log in with Google or Facebook \
+                          to add artists to the catalog'
+            flash(welcome_msg)
+
     return render_template('catalog.html',
                            genres=genres,
                            recent_items=recent_items,
@@ -96,6 +104,7 @@ def artist_create():
         return redirect(url_for('show_login'))
 
     if request.method == 'POST':
+        login_session['added-artist'] = True  # Hide help text on future visits
         form_data = request.form
         for item in form_data:
             spotify_id = item  # Retrieve Spotify ID from form data
@@ -109,6 +118,8 @@ def artist_create():
                    artist_url=url_for('artist', artist=artist.url_name))
         return json.dumps(obj)
     else:
+        if 'added-artist' not in login_session:
+            flash('Search for artists to add from the Spotify database')
         return render_template('artist_create.html', cur_user=login_session)
 
 
@@ -230,7 +241,8 @@ def genre_create():
 def genre_edit(genre):
     """ Edit a specific genre """
     db_genre, gen_artists, gen_influences = db.db_get_genre(parse_url(genre))
-    display_genre = db_genre  # Hacked solution to a strange template display issue
+    # Hacked solution to a strange template display issue
+    display_genre = db_genre
 
     # Verify that the current user has permission to perform this action
     if 'user_id' not in login_session:
@@ -264,7 +276,6 @@ def genre_edit(genre):
             break
     gen_inf_names = listify(gen_influences, 'name')
     db_genres = [gen for gen in db_genres if gen.name not in gen_inf_names]
-
 
     return render_template('genre_edit.html',
                            genre=display_genre,
@@ -358,6 +369,7 @@ def fbconnect():
     login_session['email'] = data['email']
     login_session['fb_id'] = data['id']
     login_session['provider'] = 'facebook'
+    login_session['logged_out'] = False
 
     # The token must be stored in the login_session in order to properly logout
     stored_token = token.split("=")[1]
@@ -448,6 +460,8 @@ def authenticate_user():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
     login_session['provider'] = 'google'
+    login_session['logged_out'] = False
+
 
     # If user is not already in database, create account for that e-mail
     db_user = db.db_get_user(login_session['email'])
@@ -490,6 +504,9 @@ def disconnect_user():
         del login_session['email']
         del login_session['picture']
         del login_session['user_id']
+        if 'added-artist' in login_session:
+            del login_session['added-artist']
+        login_session['logged-out'] = True
     else:
         response = make_response(json.dumps("Failed to disconnect user"), 400)
         response.headers['Content-Type'] = 'application/json'
