@@ -7,13 +7,17 @@
 
 {% block content %}
     <form method="POST">
+        <div class="row">
+            <div class="form-group float-xs-right">
+                <button class="btn btn-primary" type="submit">Create</button>
+                <a href="{{url_for('catalog')}}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
         <div class="form-group">
             <label for="name"><strong>Name</strong></label>
             <input class="form-control" type="text" name="name" id="name"/>
         </div>
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Create</button>
-        </div>
+
 
     {% if artists %}
         <div class="row">
@@ -51,9 +55,15 @@
                 {% endfor %}
             </div>
             {% endfor %}
-            </div>
         </div>
     {% endif %}
+
+        <div class="row">
+            <div class="form-group float-xs-right">
+                <button class="btn btn-primary" type="submit">Create</button>
+                <a href="{{url_for('catalog')}}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
 
     </form>
 {% endblock %}
