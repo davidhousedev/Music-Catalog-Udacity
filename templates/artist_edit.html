@@ -7,29 +7,98 @@
 
 {% block content %}
     <form method="POST" id="edit-form">
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name" value="{{artist.name}}" />
-        <label>Genres
-            {% for genre in artist_genres %}
-                <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre|{{genre.name}}" id={{genre.name}} checked />
-            {% endfor %}
-            {% for genre in db_genres %}
-                <label for="{{genre.name}}">{{genre.name}}</label>
-                <input type="checkbox" name="genre|{{genre.name}}" id={{genre.name}} />
-            {% endfor %}
-        </label>
-        <label>Top Songs
+        <div class="row">
+            <div class="form-group float-xs-right">
+                <button class="btn btn-primary">Save Changes</button>
+                <a class="btn btn-secondary" href="{{url_for('artist', artist=artist.url_name)}}">Cancel</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="name"><strong>Name</strong></label>
+                <input class="form-control" type="text" name="name" id="name" value="{{artist.name}}" />
+            </div>
+        </div>
+
+        <div class="row">
+            <h4>Top Songs</h4>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
             {% set count = 0 %}
             {% for song in artist_songs %}
-                <label for="{{song.youtube_id}}|title">Title</label>
-                <input type="text" name="song|title|{{count}}" id="{{song.youtube_id}}|title" value="{{song.name}}" />
-                <label for="{{song.youtube_id}}|id">Youtube Video ID</label>
-                <input type="text" name="song|id|{{count}}" id="{{song.youtube_id}}|id" value="{{song.youtube_id}}"/>
+                <div class="form-group">
+                    <div class="col-sm-2 hidden-xs-down">
+                        <strong>Song {{count + 1}}</strong>
+                    </div>
+                    <div class="col-xs-6 col-sm-5">
+                        <label for="{{song.youtube_id}}|title">Title
+                            <input class="form-control" type="text" name="song|title|{{count}}" id="{{song.youtube_id}}|title" value="{{song.name}}" />
+                        </label>
+                    </div>
+                    <div class="col-xs-6 col-sm-5">
+                        <label for="{{song.youtube_id}}|id">Youtube Video ID
+                            <input class="form-control" type="text" name="song|id|{{count}}" id="{{song.youtube_id}}|id" value="{{song.youtube_id}}"/>
+                        </label>
+                    </div>
+                </div>
                 {% set count = count + 1 %}
             {% endfor %}
-        </label>
-        <button>Save Changes</button>
-        <a href="{{url_for('artist', artist=artist.url_name)}}">Cancel</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <h4>Genres</h4>
+        </div>
+
+    {% if artist_genres %}
+        <div class="row">
+
+            <div class="col-xs-12 col-sm-2 form-group">
+                <strong>Sub-Genres</strong>
+            </div>
+            {% for column in columns(artist_genres) %}
+            <div class="col-xs-12 col-sm-5">
+                {% for genre in column %}
+                <div class="form-group">
+                    <label class="form-check-label text-capitalize" for="{{genre.gen_id}}">
+                        <input type="checkbox" name="genre|{{genre.name}}" id={{genre.gen_id}} checked /> {{genre.name}}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if db_genres %}
+        <div class="row">
+
+            <div class="col-xs-12 col-sm-2 form-group">
+                <strong>Sub-Genres</strong>
+            </div>
+            {% for column in columns(db_genres) %}
+            <div class="col-xs-12 col-sm-5">
+                {% for genre in column %}
+                <div class="form-group">
+                    <label class="form-check-label text-capitalize" for="{{genre.gen_id}}">
+                        <input type="checkbox" name="genre|{{genre.name}}" id={{genre.gen_id}} /> {{genre.name}}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+        <div class="row">
+            <div class="form-group float-xs-right">
+                <button class="btn btn-primary">Save Changes</button>
+                <a class="btn btn-secondary" href="{{url_for('artist', artist=artist.url_name)}}">Cancel</a>
+            </div>
+        </div>
+
     </form>
 {% endblock %}
