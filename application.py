@@ -8,7 +8,7 @@ import httplib2
 import requests
 
 from helpers.http_helpers import parse_url, parse_edit_form_data
-from helpers.http_helpers import parse_genre_form_data
+from helpers.http_helpers import parse_genre_form_data, bootstrap_column_split
 
 from database_setup import ARTIST_IMAGE_WIDTH_LG, ARTIST_IMAGE_WIDTH_MD
 from database_setup import ARTIST_IMAGE_WIDTH_SM, ARTIST_IMAGE_WIDTH_XS
@@ -228,7 +228,7 @@ def genre_create():
                                         login_session)[1]
         return redirect(url_for('genre', genre=genre_name))
 
-    return render_template('genre_create.html',
+    return render_template('genre_create_v2.html',
                            artists=artists,
                            genres=genres,
                            cur_user=login_session)
@@ -629,6 +629,7 @@ def json_user(user):
 
 
 if __name__ == '__main__':
+    app.add_template_global(bootstrap_column_split, name='columns')
     app.secret_key = FLASK_SECRET
     app.debug = True
     app.run(host='0.0.0.0', port=5000)

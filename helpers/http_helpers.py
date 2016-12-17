@@ -1,12 +1,14 @@
 from urllib import unquote
 from database.database_helpers import url_name
 
+
 def parse_url(url):
     ''' Replaces URL escapes with native values,
     and converts to int if string is all nums) '''
     if type(url) != int:
         url = unquote(url)
     return url
+
 
 def parse_edit_form_data(form_data):
     ''' Parses form data from artist edit form
@@ -32,6 +34,7 @@ def parse_edit_form_data(form_data):
             continue
     return data
 
+
 def parse_genre_form_data(form_data):
     ''' Parses form data derived from a genre creation or edit,
     and returns a dictionary with the form data organized by data type '''
@@ -49,3 +52,16 @@ def parse_genre_form_data(form_data):
                 genre['influences'].append(int(item_split[1]))
     return genre
 
+
+def bootstrap_column_split(alist):
+    ''' Splits contents of a list in half,
+    into a list containing two lists. Used when formatting
+    information for display in Bootstrap columns. '''
+    length = len(alist)
+    if length % 2 == 0:  # number of items are even
+        column1 = alist[:length / 2]
+        column2 = alist[length / 2:]
+    else:  # number of items are odd
+        column1 = alist[:length / 2 + 1]
+        column2 = alist[length / 2 + 1:]
+    return [column1, column2]
