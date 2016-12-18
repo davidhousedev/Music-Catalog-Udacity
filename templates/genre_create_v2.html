@@ -8,9 +8,14 @@
 {% block content %}
     <form method="POST">
         <div class="row">
-            <div class="form-group float-xs-right">
-                <button class="btn btn-primary" type="submit">Create</button>
-                <a href="{{url_for('catalog')}}" class="btn btn-secondary">Cancel</a>
+            <div class="form-group">
+                <div class="float-xs-left">
+                    <h2>Create a Genre</h2>
+                </div>
+                <div class="float-xs-left float-sm-right">
+                    <button class="btn btn-primary" type="submit">Create</button>
+                    <a href="{{url_for('catalog')}}" class="btn btn-secondary">Cancel</a>
+                </div>
             </div>
         </div>
         <div class="form-group">

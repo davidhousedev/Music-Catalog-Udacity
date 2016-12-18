@@ -8,9 +8,14 @@
 {% block content %}
     <form method="POST" id="edit-form">
         <div class="row">
-            <div class="form-group float-xs-right">
-                <button class="btn btn-primary">Save Changes</button>
-                <a class="btn btn-secondary" href="{{url_for('artist', artist=artist.url_name)}}">Cancel</a>
+            <div class="form-group">
+                <div class="float-xs-left">
+                    <h2>Edit an Artist</h2>
+                </div>
+                <div class="float-xs-left float-sm-right">
+                    <button class="btn btn-primary">Save Changes</button>
+                    <a class="btn btn-secondary" href="{{url_for('artist', artist=artist.url_name)}}">Cancel</a>
+                </div>
             </div>
         </div>
 
