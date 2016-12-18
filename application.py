@@ -27,7 +27,7 @@ from api_keys import GOOGLE_CLIENT_ID, FLASK_SECRET
 app = Flask(__name__)
 
 # Define number of recent additions to display on catalog homepage
-MAX_RECENT_ADDITIONS = 5
+MAX_RECENT_ADDITIONS = 6
 
 
 #
