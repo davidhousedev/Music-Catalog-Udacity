@@ -20,6 +20,8 @@
     {% for artist in artists %}
         <a href="{{url_for('artist', artist=artist.url_name)}}">
         <div class="card card-block text-xs-center">
+            <h3 class="card-title text-muted">{{artist.name}}</h3>
+
             <picture>
                 {% if artist.img_url_lg %}
                     <source media="(min-width: {{img_lg}}px)" srcset="{{artist.img_url_lg}}">
@@ -36,7 +38,6 @@
                 <img class="card-img-top img-fluid artist-img" src="">
             </picture>
 
-            <h4 class="card-title text-muted">{{artist.name}}</h4>
         </div>
 
         </a>

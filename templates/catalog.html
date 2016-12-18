@@ -5,6 +5,12 @@
 {% endblock %}
 {% block content %}
     <div class="row">
+        <div class="col-xs-12 text-xs-center">
+            <h1>Music Catalog</h1>
+            <p><small class="text-muted">Watch Youtube music videos for artists' top Spotify songs</small></p>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-xs-12">
             <h2>Recent Additions</h2>
         </div>
@@ -14,6 +20,8 @@
             {% for artist in recent_items %}
                 <a href="{{url_for('artist', artist=artist.url_name)}}">
                     <div class="card card-block text-xs-center">
+                        <h3 class="card-title text-muted">{{artist.name}}</h3>
+
                         <picture>
                             {% if artist.img_url_lg %}
                                 <source media="(min-width: {{img_lg}}px)" srcset="{{artist.img_url_lg}}">
@@ -30,7 +38,6 @@
                             <img class="card-img-top img-fluid artist-img" src="">
                         </picture>
 
-                        <h4 class="card-title text-muted">{{artist.name}}</h4>
                     </div>
                 </a>
             {% endfor %}
