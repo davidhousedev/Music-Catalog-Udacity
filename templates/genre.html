@@ -51,19 +51,21 @@
 
 
 {% if influences %}
-    <h3>Sub-genres</h3>
-    <div class="col-xs-12 col-sm-8 col-md-6">
+    {% for column in columns(influences) %}
+    <div class="col-xs-12 col-sm-6">
         <ul class="list-group influence-list">
-            {% for gen in influences %}
-                <a href="{{url_for('genre', genre=gen.url_name)}}">
-                    <li class="list-group-item">
-                            <h5 class="text-capitalize text-muted">{{gen.name}}</h5>
-                            <span class="tag tag-default tag-pill">Artists: {{gen.num_artists}}</span>
-                    </li>
-                </a>
-            {% endfor %}
+
+        {% for gen in column %}
+            <a href="{{url_for('genre', genre=gen.url_name)}}">
+                <li class="list-group-item">
+                    <h5 class="text-capitalize">{{gen.name}}<small class="float-xs-right text-muted">{{gen.num_artists}}</small></h5>
+                </li>
+            </a>
+        {% endfor %}
+
         </ul>
     </div>
+    {% endfor %}
 {% endif %}
 
 

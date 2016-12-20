@@ -1,0 +1,6 @@
+{
+    "dev": {
+        "app_function": "application.app", 
+        "s3_bucket": "davidhousedev-music-catalog"
+    }
+}

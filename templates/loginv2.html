@@ -100,26 +100,40 @@
 
 {% endblock %}
 {% block content %}
+  <div class="row">
+    <div class="col-xs-12 text-xs-center">
+      <h1>Log in</h1>
+      <p>with Google or Facebook to modify the catalog</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 text-xs-center">
+      <div id="signInButton">
+        <span class="g-signin"
+          data-scope="openid email"
+          data-clientid="1089347793303-6ojhdfgrtdou1qq202uk41fbt6jm43q1.apps.googleusercontent.com"
+          data-redirecturi="postmessage"
+          data-accesstype="offline"
+          data-cookiepolicy="single_host_origin"
+          data-callback="signInCallback"
+          data-approvalprompt="force">
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 text-xs-center">
+      <fb:login-button
+        scope="public_profile,email"
+        onlogin="checkLoginState();">
+      </fb:login-button>
+    </div>
+  </div>
 
-        <div id="signInButton">
-          <span class="g-signin"
-            data-scope="openid email"
-            data-clientid="1089347793303-6ojhdfgrtdou1qq202uk41fbt6jm43q1.apps.googleusercontent.com"
-            data-redirecturi="postmessage"
-            data-accesstype="offline"
-            data-cookiepolicy="single_host_origin"
-            data-callback="signInCallback"
-            data-approvalprompt="force">
-          </span>
-        </div>
 
-        <fb:login-button
-          scope="public_profile,email"
-          onlogin="checkLoginState();">
-        </fb:login-button>
 
-        <div id="result"></div>
-        <div id="status"></div>
+    <div id="result"></div>
+    <div id="status"></div>
 
 
 {% endblock %}
