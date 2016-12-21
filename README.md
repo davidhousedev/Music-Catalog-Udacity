@@ -7,14 +7,13 @@ This catalog was created as a project for the Udacity Full Stack Nanodegree prog
 
 # Libraries, APIs, and Modules
 
-## Twitter Bootstrap v4 Alpha: CSS Framework for creating responsive views
-## SQLAlchemy: Python ORM for interfacing with SQLite database
-## Flask: Python microframework for routing web requests
-## Jinja2: HTML Templating framework built into Flask
+* Twitter Bootstrap v4 Alpha: CSS Framework for creating responsive views
+* SQLAlchemy: Python ORM for interfacing with SQLite database
+* Flask: Python microframework for routing web requests
+* Jinja2: HTML Templating framework built into Flask
 
-## APIs
-### Spotify - All artist and genre metadata is derived from the Spotify API
-### Youtube - Youtube video ids are obtained through Google's Youtube API
+* Spotify - All artist and genre metadata is derived from the Spotify API
+* Youtube - Youtube video ids are obtained through Google's Youtube API
 
 * __database__ - Handles SQAlchemy database sessions, interface between database controller and models
     * __create.py__ - Creates new entities in models
@@ -72,15 +71,18 @@ This catalog was created as a project for the Udacity Full Stack Nanodegree prog
 
 
 # Author
+
 David A. House
+
 davidhousedev@gmail.com
+
 @davidhousedev
 
 
 # Contact
 For support and other inquiries, please contact me via e-mail or on Twitter
-Email: davidhousedev@gmail.com
-Twitter: @davidhousedev
+    Email: davidhousedev@gmail.com
+    Twitter: @davidhousedev
 
 
 # LICENSE
