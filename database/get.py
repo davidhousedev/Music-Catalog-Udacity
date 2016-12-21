@@ -2,6 +2,7 @@ from sqlalchemy import desc
 from database_setup import Base, Artist, ArtistGenre, Genre
 from database_setup import Influence, TopSongs, User
 
+
 def user_by_email(session, email):
     ''' Returns a user object corresponding to a provided email address '''
     return session.query(User).filter_by(email=email).one()

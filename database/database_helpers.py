@@ -1,4 +1,7 @@
-import json, urllib, urllib2, pprint
+import json
+import urllib
+import urllib2
+import pprint
 from unicodedata import normalize
 from database_setup import Base, Artist
 from api_keys import GOOGLE_API_KEY
@@ -57,12 +60,14 @@ def api_youtube_first_result(artist, song_name):
             return item[u'id'][u'videoId']
     return None
 
+
 def api_spotify_artist(spotify_id):
     ''' Returns an artist name and genres in a tuple
     from a Spotify API call '''
     url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
     data = json.load(urllib2.urlopen(url))
     return (data[u'name'], data[u'genres'], data[u'images'])
+
 
 def api_spotify_top_tracks(spotify_id):
     ''' Returns a descending ordered list of top track names
@@ -74,6 +79,7 @@ def api_spotify_top_tracks(spotify_id):
     for track in track_data[u'tracks']:
         artist_top_track.append(track[u'name'])
     return artist_top_track
+
 
 def url_name(name):
     ''' Converts an artist or genre name into a url-friendly string.

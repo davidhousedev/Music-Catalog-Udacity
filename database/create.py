@@ -1,4 +1,5 @@
-import datetime, pprint
+import datetime
+import pprint
 
 from database_setup import Base, Artist, ArtistGenre, Genre
 from database_setup import Influence, TopSongs, User
@@ -9,6 +10,7 @@ import database.get as get
 from database.database_helpers import listify, api_spotify_top_tracks
 from database.database_helpers import get_youtube_ids, TOP_SONG_LIMIT
 from database.database_helpers import url_name
+
 
 def user(session, name, email, picture_url):
     ''' Creates a new row in the User table '''
@@ -38,6 +40,7 @@ def artist(session, name, spotify_id, images, user_id):
                 new_artist.img_url_xs = image[u'url']
     session.add(new_artist)
 
+
 def genre(session, name, user_id):
     ''' Creates a new row in the Genre table '''
     new_genre = Genre(name=name,
@@ -46,6 +49,7 @@ def genre(session, name, user_id):
                       user=user_id)
     session.add(new_genre)
     return new_genre.url_name
+
 
 def genres(session, new_genres, user_id):
     ''' When passed a db session and a list of music genres,
@@ -57,12 +61,14 @@ def genres(session, new_genres, user_id):
         if gen_name not in db_genre_names:
             genre(session, gen_name, user_id)
 
+
 def artist_genre(session, artist_id, genre_name):
     ''' Creates a single artist genre in the database '''
     genre_id = get.genre_by_name(session, genre_name).gen_id
     new_artist_genre = ArtistGenre(artist=artist_id,
                                    genre=genre_id)
     session.add(new_artist_genre)
+
 
 def artist_genres(session, artist_id, genre_names):
     ''' When passed a db session, a db art_id, and a list of genre strings,
@@ -72,6 +78,7 @@ def artist_genres(session, artist_id, genre_names):
         new_artist_genre = ArtistGenre(artist=artist_id,
                                        genre=genre_id)
         session.add(new_artist_genre)
+
 
 def top_songs(session, artist_name, spotify_id, artist_id):
     artist_top_songs = api_spotify_top_tracks(spotify_id)
@@ -87,6 +94,7 @@ def top_songs(session, artist_name, spotify_id, artist_id):
                                 name=artist_top_songs[i],
                                 youtube_id=youtube_ids[i])
         session.add(new_top_song)
+
 
 def influence(session, parent_id, child_id):
     ''' Creates an Influence row, linking the parent genre

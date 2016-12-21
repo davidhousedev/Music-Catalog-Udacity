@@ -67,7 +67,8 @@ def db_add_artist(spotify_id, login_session):
 
     session = DBSession()
     try:
-        artist_name, artist_genres, artist_images = api_spotify_artist(spotify_id)
+        artist_name, artist_genres, artist_images = api_spotify_artist(
+            spotify_id)
         # Add artist record to database
         create.artist(session,
                       artist_name,
@@ -119,7 +120,6 @@ def db_get_artist(artist):
         raise e
     finally:
         session.close()
-
 
 
 def db_get_all_artists():

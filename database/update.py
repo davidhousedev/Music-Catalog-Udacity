@@ -41,6 +41,7 @@ def artist_top_songs(session, songs_obj, artist_id):
             top_song.youtube_id = data['id']
             session.add(top_song)
 
+
 def genre(session, name, gen_id):
     ''' Updates a specific genre with a new name,
     and updates the genre's url_name to reflect changes '''
@@ -48,6 +49,7 @@ def genre(session, name, gen_id):
     genre.name = name
     genre.url_name = url_name(name)
     session.add(genre)
+
 
 def artist_genres_by_genre(session, artist_ids, gen_id):
     ''' Updates artist relationships for a specific genre
@@ -61,6 +63,7 @@ def artist_genres_by_genre(session, artist_ids, gen_id):
     for art_id in db_artist_ids:
         if art_id not in artist_ids:
             delete.artist_genre(session, art_id, gen_id)
+
 
 def influences(session, children, gen_id):
     ''' Updates a single genre's influence relationships
