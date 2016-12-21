@@ -242,6 +242,8 @@ def db_get_genres_by_user(user_id):
 
 
 def db_create_genre(name, artists, influences, login_session):
+    ''' Creates a new genre on the database, returns a tuple
+    containing an add confirmation (0) and the new genre object (1)'''
     session = DBSession()
     try:
         new_genre = create.genre(session, name, login_session['user_id'])

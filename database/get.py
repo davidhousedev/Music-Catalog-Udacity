@@ -14,6 +14,7 @@ def user_by_id(session, user_id):
 
 
 def genres(session):
+    ''' Returns all genres ordered alphabetically by genre name '''
     return session.query(Genre).order_by(Genre.name).all()
 
 
@@ -55,6 +56,8 @@ def genres_by_user(session, user_id):
 
 
 def artists(session, limit=None):
+    ''' Returns a number of artists corresponding to param:limit,
+    ordered by created time (newest first) '''
     artists = session.query(Artist).order_by(
         desc(Artist.created)).limit(limit).all()
     return artists
@@ -96,6 +99,7 @@ def artists_by_genre(session, genre_id):
 
 
 def top_song(session, artist_id, rank):
+    ''' Returns an artist's top song, according to art_id and song rank '''
     return session.query(TopSongs).filter_by(artist=artist_id, rank=rank).one()
 
 

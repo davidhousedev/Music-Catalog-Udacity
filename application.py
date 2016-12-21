@@ -418,8 +418,7 @@ def authenticate_user():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = credentials.access_token
-    url = (
-        'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)
+    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)
     http = httplib2.Http()
     result = json.loads(http.request(url, 'GET')[1])
     if result.get('error') is not None:
@@ -463,7 +462,6 @@ def authenticate_user():
     login_session['email'] = data['email']
     login_session['provider'] = 'google'
     login_session['logged_out'] = False
-
 
     # If user is not already in database, create account for that e-mail
     db_user = db.db_get_user(login_session['email'])
@@ -555,6 +553,7 @@ def gdisconnect():
 
 @app.route('/artists/json/')
 def json_artists():
+    ''' Returns JSON formatted data for a all artists '''
     artists = db.db_get_all_artists()
     artists_arry = None
     # If database data exists, prepare it to be returned as JSON
@@ -566,6 +565,7 @@ def json_artists():
 
 @app.route('/genres/json/')
 def json_genres():
+    ''' Returns JSON formatted data for a all genres '''
     genres = db.db_get_all_genres()
     genres_arry = None
     # If database data exists, prepare it to be returned as JSON
@@ -578,6 +578,7 @@ def json_genres():
 @app.route('/genre/<int:genre>/json/')
 @app.route('/genre/<genre>/json/')
 def json_genre(genre):
+    ''' Returns JSON formatted data for a single genre '''
     genre, artists, influences = db.db_get_genre(parse_url(genre))
 
     genre_dict = dict(genre=None, artists=None, influences=None)
@@ -595,6 +596,7 @@ def json_genre(genre):
 @app.route('/artist/<int:artist>/json/')
 @app.route('/artist/<artist>/json/')
 def json_artist(artist):
+    ''' Returns JSON formatted data for a single artist '''
     artist, genres, songs = db.db_get_artist(parse_url(artist))
 
     artist_dict = dict(artist=None, genres=None, songs=None)
@@ -629,7 +631,15 @@ def json_user(user):
     return jsonify(user=user_dict)
 
 
+# Heroku deploy server settings found here: http://stackoverflow.com/a/17276310
 if __name__ == '__main__':
+
+    # Flask HTTPS fix for url_for() found here:
+    # http://stackoverflow.com/a/26636880
+    app.config.update(dict(
+        PREFERRED_URL_SCHEME='https'
+    ))
+
     app.add_template_global(bootstrap_column_split, name='columns')
     app.secret_key = FLASK_SECRET
     app.debug = True
