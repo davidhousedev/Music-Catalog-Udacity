@@ -1,6 +1,5 @@
 *.pyc
 *.db
-api_keys.py
 scratch_pad.txt
 *client_secrets.json
 venv
