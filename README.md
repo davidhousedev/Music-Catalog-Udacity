@@ -1,5 +1,7 @@
 # Music Catalog
 
+Currently hosted live on [Heroku](https://pacific-caverns-50039.herokuapp.com/)
+
 This app curates a catalog of music artists, storing information about their most popular songs and displaying music videos corresponding to those songs. The app populates all artist metadata through calls to the Spotify API then to the Youtube API. Artist genre infromation is also derived from Spotify, and genres can be applied to both artists and to other genres (e.g. Rock => Alternative Rock or Hip Hop => West Coast Hip Hop). App views are fully responsive through use of Twitter Bootstrap v4 Alpha.
 
 This catalog was created as a project for the Udacity Full Stack Nanodegree program. Original project specifications were expanded to include population of all data from API calls to Spotify and Youtube, and extensive responsive image handling.
