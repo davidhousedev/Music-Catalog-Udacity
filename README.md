@@ -7,14 +7,15 @@ This catalog was created as a project for the Udacity Full Stack Nanodegree prog
 
 # Libraries, APIs, and Modules
 
+### Libraries
 * Twitter Bootstrap v4 Alpha: CSS Framework for creating responsive views
 * SQLAlchemy: Python ORM for interfacing with SQLite database
 * Flask: Python microframework for routing web requests
 * Jinja2: HTML Templating framework built into Flask
-
+### APIs
 * Spotify - All artist and genre metadata is derived from the Spotify API
 * Youtube - Youtube video ids are obtained through Google's Youtube API
-
+### Modules
 * __database__ - Handles SQAlchemy database sessions, interface between database controller and models
     * __create.py__ - Creates new entities in models
     * __get.py__ - Retrieves existing entities from models
@@ -67,7 +68,7 @@ This catalog was created as a project for the Udacity Full Stack Nanodegree prog
     3. Edit __fb_client_secrets__ with your Facebook app's `app_id`, and `app_secret`
     4. (Optional) Add `*client_secrets.json` to your .gitignore to prevent private data from being uploaded to your git repository
     5. (Optional) Application is currently configured to run on Heroku, please contact for support on how to deploy the application to your own Heroku instance
-    __5. Run `python application.py`__ to start the application locally
+    6. Run __`python application.py`__ to start the application locally
 
 
 # Author
@@ -81,8 +82,8 @@ davidhousedev@gmail.com
 
 # Contact
 For support and other inquiries, please contact me via e-mail or on Twitter
-    Email: davidhousedev@gmail.com
-    Twitter: @davidhousedev
+* Email: davidhousedev@gmail.com
+* Twitter: @davidhousedev
 
 
 # LICENSE
