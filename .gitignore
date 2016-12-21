@@ -1,5 +1,3 @@
 *.pyc
 *.db
-scratch_pad.txt
-*client_secrets.json
 venv
