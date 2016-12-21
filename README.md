@@ -61,12 +61,14 @@ This catalog was created as a project for the Udacity Full Stack Nanodegree prog
 # Installation Instructions
 1. Install Python 2.7.x and pip
 2. Fork and clone repository to your local machine
-3. In main application diretory:
+3. In `templates/login.html` change `data-clientid` to equal your Google project's `client_id`
+4. In main application diretory:
     1. Run `pip install -r requirements.txt` to install dependencies
     2. Edit __client_secrets.json__ with your Google project's `client_id`, `project_id`, and `client_secret`
     3. Edit __fb_client_secrets__ with your Facebook app's `app_id`, and `app_secret`
     4. (Optional) Add `*client_secrets.json` to your .gitignore to prevent private data from being uploaded to your git repository
-4. In `templates/login.html` change `data-clientid` to equal your Google project's `client_id`
+    5. (Optional) Application is currently configured to run on Heroku, please contact for support on how to deploy the application to your own Heroku instance
+    __5. Run `python application.py`__ to start the application locally
 
 
 # Author
