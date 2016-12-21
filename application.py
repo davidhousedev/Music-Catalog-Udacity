@@ -232,7 +232,7 @@ def genre_create():
                                         login_session)[1]
         return redirect(url_for('genre', genre=genre_name))
 
-    return render_template('genre_create_v2.html',
+    return render_template('genre_create.html',
                            artists=artists,
                            genres=genres,
                            cur_user=login_session)
@@ -329,7 +329,7 @@ def show_login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for char in xrange(32))
     login_session['state'] = state
-    return render_template('loginv2.html', STATE=state, cur_user=login_session)
+    return render_template('login.html', STATE=state, cur_user=login_session)
 
 
 @app.route('/fbconnect', methods=['POST'])
