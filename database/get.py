@@ -87,9 +87,7 @@ def artists_by_genre(session, genre_id):
     to a specific genre_id '''
     artist_genres = session.query(ArtistGenre).filter_by(genre=genre_id).all()
     artist_objs = []
-    print 'line 60'
     for artist_genre in artist_genres:
-        print artist_genre.artist
         artist = session.query(Artist).filter_by(
             art_id=artist_genre.artist).one()
         artist_objs.append(artist)
@@ -97,7 +95,6 @@ def artists_by_genre(session, genre_id):
 
 
 def top_song(session, artist_id, rank):
-    print 'looking up: artist-%s, rank-%s' % (artist_id, rank)
     return session.query(TopSongs).filter_by(artist=artist_id, rank=rank).one()
 
 

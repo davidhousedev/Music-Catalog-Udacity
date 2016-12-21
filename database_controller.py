@@ -69,8 +69,6 @@ def db_add_artist(spotify_id, login_session):
     try:
         artist_name, artist_genres, artist_images = api_spotify_artist(spotify_id)
         # Add artist record to database
-        print artist_name, spotify_id
-        pprint.pprint(login_session)
         create.artist(session,
                       artist_name,
                       spotify_id,
@@ -152,7 +150,6 @@ def db_get_artists_by_user(user_id):
 def db_update_artist(form_data, artist_id):
     ''' Updates database entry for an artist, genres, and top_songs
     based on information supplied by user form data '''
-    pprint.pprint(form_data)
     session = DBSession()
     try:
         update.artist(session,
@@ -199,7 +196,6 @@ def db_get_genre(genre):
     a list of all artist_ids corresponding to that genre,
     and a list of genres influenced by that genre '''
     session = DBSession()
-    print 'trying to get genre: %s' % genre
     try:
         if type(genre) is int:
             db_genre = get.genre_by_id(session, genre)
@@ -268,7 +264,6 @@ def db_edit_genre(name, artists, influences, genre_id):
     and genre influence associations '''
     session = DBSession()
     try:
-        print name, artists, influences, genre_id
         update.genre(session, name, genre_id)
         update.artist_genres_by_genre(session, artists, genre_id)
         update.influences(session, influences, genre_id)

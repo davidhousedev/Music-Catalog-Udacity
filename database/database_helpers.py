@@ -24,7 +24,6 @@ def listify_multi(objs, *attrs):
         song = []
         for attr in attrs:
             song.append(obj.serialize[attr])
-        print song
         attr_list.append(tuple(song))
     return attr_list
 
@@ -63,7 +62,6 @@ def api_spotify_artist(spotify_id):
     from a Spotify API call '''
     url = 'https://api.spotify.com/v1/artists/%s' % spotify_id
     data = json.load(urllib2.urlopen(url))
-    pprint.pprint(data)
     return (data[u'name'], data[u'genres'], data[u'images'])
 
 def api_spotify_top_tracks(spotify_id):
@@ -81,5 +79,4 @@ def url_name(name):
     ''' Converts an artist or genre name into a url-friendly string.
     Remove accent marks and replaces spaces with + '''
     name = normalize('NFKD', name).encode('ascii', 'ignore').lower()
-    print 'Converted name to: %s' % urllib.quote_plus(name)
     return urllib.quote_plus(name)

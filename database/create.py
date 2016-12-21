@@ -21,7 +21,6 @@ def artist(session, name, spotify_id, images, user_id):
     ''' When passed an artist name and spotify_id,
     creates an artist record in the database '''
     encoded_name = url_name(name)
-    print encoded_name
     new_artist = Artist(name=name,
                         spotify_id=spotify_id,
                         url_name=url_name(name),
@@ -30,17 +29,13 @@ def artist(session, name, spotify_id, images, user_id):
     if images:
         for image in images:
             if image[u'width'] > ARTIST_IMAGE_WIDTH_LG:
-                print 'ADDING A LARGE IMAGE TO ARTIST'
                 new_artist.img_url_lg = image[u'url']
-                pprint.pprint(new_artist.serialize)
             elif image[u'width'] > ARTIST_IMAGE_WIDTH_MD:
                 new_artist.img_url_md = image[u'url']
             elif image[u'width'] > ARTIST_IMAGE_WIDTH_SM:
                 new_artist.img_url_sm = image[u'url']
             else:
                 new_artist.img_url_xs = image[u'url']
-    print 'CREATING NEW ARTIST'
-    pprint.pprint(new_artist.serialize)
     session.add(new_artist)
 
 def genre(session, name, user_id):
@@ -50,7 +45,6 @@ def genre(session, name, user_id):
                       created=datetime.datetime.utcnow(),
                       user=user_id)
     session.add(new_genre)
-    print 'returning %s' % new_genre.url_name
     return new_genre.url_name
 
 def genres(session, new_genres, user_id):

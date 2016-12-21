@@ -275,7 +275,6 @@ def genre_edit(genre):
     # Remove the viewed genre from display
     for gen in db_genres:
         if gen.gen_id == db_genre.gen_id:
-            print 'deleting %s' % gen.name
             db_genres.remove(gen)
             break
     gen_inf_names = listify(gen_influences, 'name')
@@ -391,7 +390,6 @@ def fbconnect():
     db_user = db.db_get_user(login_session['email'])
     if not db_user:
         db_user = db.db_create_user(login_session)
-    print 'logging in with user ID %s, %s' % (db_user.user_id, db_user.email)
     login_session['user_id'] = db_user.user_id
     return redirect(url_for('catalog'))
 
@@ -471,7 +469,6 @@ def authenticate_user():
     db_user = db.db_get_user(login_session['email'])
     if not db_user:
         db_user = db.db_create_user(login_session)
-    print 'logging in with user ID %s, %s' % (db_user.user_id, db_user.email)
     login_session['user_id'] = db_user.user_id
     return redirect(url_for('catalog'))
 
