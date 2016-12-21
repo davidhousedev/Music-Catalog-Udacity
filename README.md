@@ -1,12 +1,20 @@
-# Item Catalog
+# Music Catalog
 
-This is an item catalog web application built as a project for the Udacity Full Stack Web Developer Nanodegree.
+This app curates a catalog of music artists, storing information about their most popular songs and displaying music videos corresponding to those songs. The app populates all artist metadata through calls to the Spotify API then to the Youtube API. Artist genre infromation is also derived from Spotify, and genres can be applied to both artists and to other genres (e.g. Rock => Alternative Rock or Hip Hop => West Coast Hip Hop). App views are fully responsive through use of Twitter Bootstrap v4 Alpha.
 
-# Modules, Libraries and APIs
+This catalog was created as a project for the Udacity Full Stack Nanodegree program. Original project specifications were expanded to include population of all data from API calls to Spotify and Youtube, and extensive responsive image handling.
+
+
+# Libraries, APIs, and Modules
+
 ## Twitter Bootstrap v4 Alpha: CSS Framework for creating responsive views
 ## SQLAlchemy: Python ORM for interfacing with SQLite database
 ## Flask: Python microframework for routing web requests
 ## Jinja2: HTML Templating framework built into Flask
+
+## APIs
+### Spotify - All artist and genre metadata is derived from the Spotify API
+### Youtube - Youtube video ids are obtained through Google's Youtube API
 
 * __database__ - Handles SQAlchemy database sessions, interface between database controller and models
     * __create.py__ - Creates new entities in models
@@ -36,20 +44,50 @@ This is an item catalog web application built as a project for the Udacity Full 
     * __genre_edit.html__ - HTML view for genre edits
     * __login.html__ - HTML view for user login/logout
     * __user.html__ - HTML view for a user's profile page
-* api_keys.py - IMPORTANT: This file must be created
+* __api_keys.py__ - Defines constants used for Flask secure cookies and Google Signin. __IMPORTANT: See installation instructions for file configuration__.
+* __application.py__ - Primary application file, contains HTTP handlers
+* __database_controller.py__ - Controller for database operations, interfaces between HTTP handlers and model
+* __database_setup.py__ - Contains Model class definitions __IMORTANT: Must be run using `python database_setup.py` before application can start__
+* __requirements.txt__ - Allows for installation of required modules with the command `pip install -r requirements.txt` from application directory
 
 
+# Requirements:
+* __Python 2.7.x and pip__
+* Active project in Google developer's console: __https://console.developers.google.com/__
+    * Under Credentials, click the dropdown next to 'Create credentials' and select 'OAuth client ID'
+* Active application with Facebook developer, Facebook Login product enabled: __https://developers.facebook.com/__
 
 
-name of the projects and all sub-modules and libraries (sometimes they are named different and very confusing to new users)
-descriptions of all the project, and all sub-modules and libraries
-5-line code snippet on how its used (if it's a library)
-copyright and licensing information (or "Read LICENSE")
-instruction to grab the documentation
-instructions to install, configure, and to run the programs
-instruction to grab the latest code and detailed instructions to build it (or quick overview and "Read INSTALL")
-list of authors or "Read AUTHORS"
-instructions to submit bugs, feature requests, submit patches, join mailing list, get announcements, or join the user or dev community in other forms
-other contact info (email address, website, company name, address, etc)
-a brief history if it's a replacement or a fork of something else
-legal notices (crypto stuff)
+# Installation Instructions
+1. Install Python 2.7.x and pip
+2. Fork and clone repository to your local machine
+3. In main application diretory:
+    1. Run `pip install -r requirements.txt` to install dependencies
+    2. Edit __client_secrets.json__ with your Google project's `client_id`, `project_id`, and `client_secret`
+    3. Edit __fb_client_secrets__ with your Facebook app's `app_id`, and `app_secret`
+    4. (Optional) Add `*client_secrets.json` to your .gitignore to prevent private data from being uploaded to your git repository
+4. In `templates/login.html` change `data-clientid` to equal your Google project's `client_id`
+
+
+# Author
+David A. House
+davidhousedev@gmail.com
+@davidhousedev
+
+
+# Contact
+For support and other inquiries, please contact me via e-mail or on Twitter
+Email: davidhousedev@gmail.com
+Twitter: @davidhousedev
+
+
+# LICENSE
+Copyright (c) 2016 David Alexander House
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+All data derived from Spotify and Youtube APIs subject to original respective copyright.
