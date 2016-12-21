@@ -12,9 +12,11 @@ This catalog was created as a project for the Udacity Full Stack Nanodegree prog
 * SQLAlchemy: Python ORM for interfacing with SQLite database
 * Flask: Python microframework for routing web requests
 * Jinja2: HTML Templating framework built into Flask
+
 ### APIs
 * Spotify - All artist and genre metadata is derived from the Spotify API
 * Youtube - Youtube video ids are obtained through Google's Youtube API
+
 ### Modules
 * __database__ - Handles SQAlchemy database sessions, interface between database controller and models
     * __create.py__ - Creates new entities in models
